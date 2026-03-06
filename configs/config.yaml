@@ -1,0 +1,136 @@
+# AP1000 Digital Twin Configuration
+
+# Geometry parameters
+geometry:
+  pipe_diameter: 0.7  # meters
+  pipe_length_factor: 10  # D
+  elbow_radius_factor: 1.5  # D
+  straight_before: 5  # D
+  straight_after: 5  # D
+
+# Mesh parameters
+mesh:
+  target_cells: 25000
+  skewness_max: 0.85
+  orthogonal_quality_min: 0.2
+  refinement_elbow: true
+
+# Fluent simulation parameters
+fluent:
+  solver: "pressure-based"
+  solver_type: "steady"
+  turbulence_model: "rng-k-epsilon"
+  fluid:
+    name: "water"
+    density: 720  # kg/m³
+    
+  boundary_conditions:
+    inlet:
+      type: "velocity-inlet"
+      velocity_range: [4.0, 6.0]  # m/s
+    outlet:
+      type: "pressure-outlet"
+      pressure: 15.5e6  # Pa (15.5 MPa)
+    wall:
+      type: "no-slip"
+
+# Parameter sweep
+parameter_sweep:
+  velocity:
+    min: 4.0
+    max: 6.0
+    samples: 20
+  break_size:  # percentage of pipe diameter
+    min: 0.0
+    max: 10.0
+    samples: 10
+  temperature:  # Celsius
+    min: 290
+    max: 320
+    samples: 10
+  total_simulations: 2000
+
+# DeepONet architecture
+deeponet:
+  branch_net:
+    input_dim: 3  # [velocity, break_size, temperature]
+    hidden_dims: [256, 512, 512]
+    output_dim: 256
+  trunk_net:
+    input_dim: 3  # [x, y, z]
+    hidden_dims: [256, 512, 256]
+    output_dim: 256
+  output_fields: ["pressure", "velocity_magnitude", "turbulence_k", "temperature"]
+  n_outputs: 4
+
+# Training parameters
+training:
+  batch_size: 16
+  epochs: 2000
+  learning_rate: 1e-3
+  optimizer: "adam"
+  scheduler:
+    type: "ReduceLROnPlateau"
+    patience: 20
+    factor: 0.5
+  early_stopping:
+    patience: 50
+    min_delta: 1e-6
+  validation_split: 0.15
+  test_split: 0.15
+  
+  # GPU optimization for RTX 4060
+  mixed_precision: true
+  gradient_accumulation_steps: 1
+  num_workers: 4
+
+# Accuracy targets
+accuracy_targets:
+  r2_score: 0.90
+  relative_l2_error: 0.10
+  mae_threshold: 0.05  # normalized
+
+# Feature translation
+feature_translation:
+  extracted_features:
+    - "average_pressure"
+    - "pressure_gradient"
+    - "mass_flow_rate"
+    - "max_turbulence"
+    - "temperature_difference"
+  locac_score_weights:
+    pressure_drop: 0.35
+    flow_change: 0.30
+    turbulence: 0.25
+    temp_diff: 0.10
+
+# LOCAC detection model
+locac_model:
+  type: "gradient_boosting"  # or "neural_network"
+  gb_params:
+    n_estimators: 500
+    max_depth: 7
+    learning_rate: 0.05
+  nn_params:
+    hidden_dims: [128, 64, 32]
+    dropout: 0.3
+  target_accuracy: 0.90
+
+# Data paths
+data_paths:
+  fluent_raw: "data/fluent_raw"
+  fluent_processed: "data/fluent_processed"
+  deeponet_dataset: "data/deeponet_dataset"
+  nppad: "data/nppad"
+
+# Output paths
+output_paths:
+  models: "results/models"
+  plots: "results/plots"
+  metrics: "results/metrics"
+  predictions: "results/predictions"
+
+# Device configuration
+device:
+  use_cuda: true
+  gpu_id: 0
