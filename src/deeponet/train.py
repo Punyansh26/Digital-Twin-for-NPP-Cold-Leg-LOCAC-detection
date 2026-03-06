@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch.cuda.amp import GradScaler, autocast
+from torch.amp import GradScaler, autocast
 import yaml
 import numpy as np
 from pathlib import Path
@@ -133,7 +133,7 @@ class DeepONetTrainer:
         )
         
         # Mixed precision scaler
-        self.scaler = GradScaler() if self.config['training']['mixed_precision'] else None
+        self.scaler = GradScaler('cuda') if self.config['training']['mixed_precision'] and torch.cuda.is_available() else None
         
         # Field names
         self.field_names = self.config['deeponet']['output_fields']
@@ -160,7 +160,7 @@ class DeepONetTrainer:
             
             # Mixed precision training
             if self.scaler:
-                with autocast():
+                with autocast('cuda'):
                     output = self.model(branch, trunk)
                     loss = self.criterion(output, target)
                 

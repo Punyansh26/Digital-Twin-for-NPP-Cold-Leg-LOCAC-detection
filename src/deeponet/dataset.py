@@ -74,8 +74,11 @@ def deeponet_collate_fn(batch):
     return branches, trunk, targets
 
 
-def create_dataloaders(h5_path, batch_size, num_workers=4):
-    """Create train, val, test dataloaders"""
+def create_dataloaders(h5_path, batch_size, num_workers=0):
+    """Create train, val, test dataloaders
+    
+    Note: num_workers=0 for Windows compatibility (multiprocessing issues)
+    """
     
     # Create datasets
     train_dataset = DeepONetDataset(h5_path, 'train')
@@ -87,7 +90,7 @@ def create_dataloaders(h5_path, batch_size, num_workers=4):
         train_dataset,
         batch_size=batch_size,
         shuffle=True,
-        num_workers=num_workers,
+        num_workers=0,  # Windows compatibility
         pin_memory=True,
         collate_fn=deeponet_collate_fn
     )
@@ -96,7 +99,7 @@ def create_dataloaders(h5_path, batch_size, num_workers=4):
         val_dataset,
         batch_size=batch_size,
         shuffle=False,
-        num_workers=num_workers,
+        num_workers=0,  # Windows compatibility
         pin_memory=True,
         collate_fn=deeponet_collate_fn
     )
@@ -105,7 +108,7 @@ def create_dataloaders(h5_path, batch_size, num_workers=4):
         test_dataset,
         batch_size=batch_size,
         shuffle=False,
-        num_workers=num_workers,
+        num_workers=0,  # Windows compatibility
         pin_memory=True,
         collate_fn=deeponet_collate_fn
     )

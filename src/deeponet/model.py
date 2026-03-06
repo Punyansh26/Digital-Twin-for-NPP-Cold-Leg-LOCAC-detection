@@ -142,7 +142,7 @@ class DeepONet(nn.Module):
             # Dot product: [batch_size, n_nodes]
             # branch_out: [batch_size, basis_dim]
             # trunk_out: [n_nodes, basis_dim]
-            output = torch.matmul(branch_out, trunk_out.T)  # [batch_size, n_nodes]
+            output = torch.matmul(branch_out, trunk_out.transpose(0, 1))  # [batch_size, n_nodes]
             
             # Add bias
             output = output + self.biases[i]
