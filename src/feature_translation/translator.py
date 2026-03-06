@@ -193,7 +193,7 @@ def test_feature_translation():
     
     # Compute LOCAC score
     score = translator.compute_locac_score(features)
-    print(f\nLOCAC risk score: {score:.4f}")
+    print(f"\nLOCAC risk score: {score:.4f}")
     
     print("\n✓ Feature translation test passed")
 
