@@ -45,6 +45,35 @@ class DeepONetDataset(Dataset):
         return branch, trunk, target
 
 
+def deeponet_collate_fn(batch):
+    """
+    Custom collate function for DeepONet data.
+    Trunk coordinates are shared across all samples, so don't batch them.
+    
+    Args:
+        batch: List of (branch, trunk, target) tuples
+    
+    Returns:
+        branch: [batch_size, branch_dim]
+        trunk: [n_nodes, trunk_dim]  (unbatched - same for all)
+        targets: [batch_size, n_outputs, n_nodes]
+    """
+    branches = []
+    targets = []
+    trunk = None
+    
+    for branch, trunk_data, target in batch:
+        branches.append(branch)
+        targets.append(target)
+        if trunk is None:
+            trunk = trunk_data  # Same for all samples
+    
+    branches = torch.stack(branches, dim=0)
+    targets = torch.stack(targets, dim=0)
+    
+    return branches, trunk, targets
+
+
 def create_dataloaders(h5_path, batch_size, num_workers=4):
     """Create train, val, test dataloaders"""
     
@@ -53,13 +82,14 @@ def create_dataloaders(h5_path, batch_size, num_workers=4):
     val_dataset = DeepONetDataset(h5_path, 'val')
     test_dataset = DeepONetDataset(h5_path, 'test')
     
-    # Create dataloaders
+    # Create dataloaders with custom collate function
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
         shuffle=True,
         num_workers=num_workers,
-        pin_memory=True
+        pin_memory=True,
+        collate_fn=deeponet_collate_fn
     )
     
     val_loader = DataLoader(
@@ -67,7 +97,8 @@ def create_dataloaders(h5_path, batch_size, num_workers=4):
         batch_size=batch_size,
         shuffle=False,
         num_workers=num_workers,
-        pin_memory=True
+        pin_memory=True,
+        collate_fn=deeponet_collate_fn
     )
     
     test_loader = DataLoader(
@@ -75,7 +106,8 @@ def create_dataloaders(h5_path, batch_size, num_workers=4):
         batch_size=batch_size,
         shuffle=False,
         num_workers=num_workers,
-        pin_memory=True
+        pin_memory=True,
+        collate_fn=deeponet_collate_fn
     )
     
     return train_loader, val_loader, test_loader
