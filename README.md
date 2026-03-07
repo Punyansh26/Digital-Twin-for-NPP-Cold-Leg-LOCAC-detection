@@ -288,7 +288,7 @@ This is a research prototype for educational and research purposes only. It is N
 ## 📧 Contact
 
 For questions or collaborations:
-- Project Location: `f:\Study\Semester 4\Minor\minorProj`
+- punyansh26
 
 ## 📄 License
 
@@ -296,6 +296,5 @@ Educational and research use only.
 
 ---
 
-**Status**: ✅ Fully Functional Research Prototype
 
 **Last Updated**: March 2026
