@@ -37,6 +37,8 @@ from src.deeponet.model import DeepONet
 from src.deeponet.deeponet_fourier import DeepONetFourier
 from src.feature_translation.translator import FeatureTranslator
 from src.physics.wall_shear_calculator import WallShearCalculator
+from src.core.model_factory import print_version_banner, operator_param_count
+from src.core.model_versions import get_tier_label
 
 
 # ---------------------------------------------------------------------------
@@ -102,13 +104,17 @@ class DigitalTwinInference:
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
         )
-        print(f"Device: {self.device}")
 
         # Load neural operator
         self.operator    = load_operator(operator, self.config, deeponet_path,
                                          self.device)
         self.operator_nm = operator
-        print(f"Operator: {operator}")
+
+        print_version_banner(
+            version  = operator,
+            device   = self.device,
+            n_params = operator_param_count(self.operator),
+        )
 
         # Load scalers
         with open(scalers_path, "rb") as f:
@@ -374,9 +380,15 @@ def parse_args():
     p = argparse.ArgumentParser(
         description="AP1000 Digital Twin Inference (upgraded)"
     )
+    p.add_argument("--model-version", default=None,
+                   dest="model_version",
+                   choices=["deeponet", "deeponet_fourier",
+                            "transolver", "clifford", "mamba", "diffusion"],
+                   help="Select model architecture (overrides --operator and config)")
     p.add_argument("--operator",     default="deeponet_fourier",
                    choices=["deeponet", "deeponet_fourier",
-                            "transolver", "clifford"])
+                            "transolver", "clifford"],
+                   help="Operator name (legacy, prefer --model-version)")
     p.add_argument("--mode",         choices=["single", "time_series", "benchmark"],
                    default="single")
     p.add_argument("--velocity",     type=float, default=5.0)
@@ -399,6 +411,17 @@ def main() -> None:
         project_root / "data" / "deeponet_dataset" / "scalers.pkl"
     )
 
+    # Resolve operator: CLI --model-version > CLI --operator > config
+    operator = args.model_version or args.operator
+    if operator == "deeponet_fourier" and not args.model_version:
+        # Check model_config for a non-default value
+        try:
+            with open(model_config_path) as _f:
+                _mc = yaml.safe_load(_f)
+            operator = _mc.get("model_version") or _mc.get("operator") or operator
+        except Exception:
+            pass
+
     operator_ckpt = models_dir / "best_model.pth"
     locac_ckpt    = models_dir / "locac_detector.pkl"
 
@@ -414,7 +437,7 @@ def main() -> None:
         deeponet_path       = operator_ckpt,
         locac_detector_path = locac_ckpt,
         scalers_path        = scalers_path,
-        operator            = args.operator,
+        operator            = operator,
         use_diffusion       = args.diffusion > 0,
         compute_wss         = args.wss,
     )

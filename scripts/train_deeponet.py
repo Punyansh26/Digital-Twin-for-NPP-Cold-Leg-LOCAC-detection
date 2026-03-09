@@ -44,6 +44,8 @@ from src.deeponet.deeponet_fourier import DeepONetFourier
 from src.deeponet.sobolev_loss import SobolevLoss
 from src.deeponet.train import MetricsCalculator, EarlyStopping
 from src.physics.divergence_penalty import DivergencePenalty
+from src.core.model_factory import print_version_banner, operator_param_count
+from src.core.model_versions import ModelVersion
 
 
 # ---------------------------------------------------------------------------
@@ -98,11 +100,13 @@ class UpgradedDeepONetTrainer:
                and self.config.get("device", {}).get("use_cuda", True)
             else "cpu"
         )
-        print(f"Device     : {self.device}")
 
         self.model = self._build_model()
-        print(f"Operator   : {self.operator_name}")
-        print(f"Parameters : {self.model.count_parameters():,}")
+        print_version_banner(
+            version  = self.operator_name,
+            device   = self.device,
+            n_params = operator_param_count(self.model),
+        )
 
         n_out = self.config["deeponet"]["n_outputs"]
         self.mse_criterion = DeepONetLoss(weights=[1.0] * n_out)
@@ -257,6 +261,7 @@ class UpgradedDeepONetTrainer:
                 "optimizer_state_dict": self.optimizer.state_dict(),
                 "metrics":              metrics,
                 "operator":             self.operator_name,
+                "model_version":        self.operator_name,
                 "config":               self.config,
             },
             self.output_dir / fname,
@@ -319,8 +324,13 @@ def run_benchmark(trainer, test_loader, n_repeats=5):
 
 def parse_args():
     p = argparse.ArgumentParser(description="Train AP1000 DeepONet (upgraded)")
-    p.add_argument("--operator",          default="deeponet_fourier",
-                   choices=["deeponet", "deeponet_fourier"])
+    p.add_argument("--operator",          default=None,
+                   choices=["deeponet", "deeponet_fourier"],
+                   help="Operator architecture (legacy flag, prefer --model-version)")
+    p.add_argument("--model-version",     default=None,
+                   dest="model_version",
+                   choices=["deeponet", "deeponet_fourier"],
+                   help="Select neural operator architecture")
     p.add_argument("--epochs",            type=int,   default=None)
     p.add_argument("--lr",                type=float, default=None)
     p.add_argument("--sobolev-weight",    type=float, default=0.1,
@@ -335,6 +345,9 @@ def parse_args():
 
 def main():
     args = parse_args()
+
+    # --model-version takes precedence over --operator; default to deeponet_fourier
+    operator = args.model_version or args.operator or "deeponet_fourier"
 
     config_path       = project_root / "configs" / "config.yaml"
     model_config_path = project_root / "configs" / "model_config.yaml"
@@ -369,7 +382,7 @@ def main():
         trainer = UpgradedDeepONetTrainer(
             config_path       = tmp_path,
             model_config_path = model_config_path,
-            operator          = args.operator,
+            operator          = operator,
             sobolev_weight    = args.sobolev_weight,
             divergence_weight = args.divergence_weight,
             use_sobolev       = not args.no_sobolev,

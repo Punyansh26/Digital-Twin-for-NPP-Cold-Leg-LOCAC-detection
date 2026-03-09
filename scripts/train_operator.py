@@ -24,6 +24,8 @@ import yaml
 
 from src.deeponet.dataset import create_dataloaders
 from src.deeponet.train import MetricsCalculator, EarlyStopping
+from src.core.model_factory import print_version_banner, operator_param_count
+from src.core.model_versions import ModelVersion
 
 
 # ---------------------------------------------------------------------------
@@ -89,8 +91,12 @@ class OperatorTrainer:
         self.model = build_operator(
             operator, self.config, self.model_config
         ).to(self.device)
-        n_params = sum(p.numel() for p in self.model.parameters() if p.requires_grad)
-        print(f"  Parameters: {n_params:,}")
+
+        print_version_banner(
+            version  = operator,
+            device   = self.device,
+            n_params = operator_param_count(self.model),
+        )
 
         # Optimiser + scheduler
         self.optimizer = torch.optim.Adam(
@@ -201,6 +207,7 @@ class OperatorTrainer:
                 "optimizer_state_dict": self.optimizer.state_dict(),
                 "val_loss": val_loss,
                 "operator": self.operator_name,
+                "model_version": self.operator_name,
             },
             path,
         )
@@ -239,8 +246,13 @@ def parse_args():
     p = argparse.ArgumentParser(
         description="Train Transolver++ or Clifford Neural Operator"
     )
-    p.add_argument("--operator",    required=True,
-                   choices=["transolver", "clifford"])
+    p.add_argument("--operator",      default=None,
+                   choices=["transolver", "clifford"],
+                   help="Operator to train (legacy flag, prefer --model-version)")
+    p.add_argument("--model-version", default=None,
+                   dest="model_version",
+                   choices=["transolver", "clifford"],
+                   help="Select neural operator architecture")
     p.add_argument("--epochs",      type=int,   default=500)
     p.add_argument("--lr",          type=float, default=1e-3)
     p.add_argument("--batch-size",  type=int,   default=16, dest="batch_size")
@@ -254,12 +266,19 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
+
+    # --model-version takes precedence over --operator
+    operator = args.model_version or args.operator
+    if not operator:
+        print("ERROR: Specify --model-version transolver|clifford")
+        sys.exit(1)
+
     print("=" * 60)
-    print(f"Train Neural Operator: {args.operator.upper()}")
+    print(f"Train Neural Operator: {operator.upper()}")
     print("=" * 60)
 
     trainer = OperatorTrainer(
-        operator          = args.operator,
+        operator          = operator,
         config_path       = args.config,
         model_config_path = args.model_config,
         lr                = args.lr,

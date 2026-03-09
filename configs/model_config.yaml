@@ -5,10 +5,24 @@
 # scripts/run_inference.py.
 
 # ---------------------------------------------------------------------------
-# Active operator
+# Active model version
 # ---------------------------------------------------------------------------
-# Options: deeponet | deeponet_fourier | transolver | clifford
+# Controls which neural operator is used throughout the pipeline.
+# CLI flag --model-version overrides this value at runtime.
+#
+# Valid values:
+#   deeponet         — Legacy baseline DeepONet
+#   deeponet_fourier — Tier 1: Optimized DeepONet (Fourier + Sobolev + Divergence)
+#   transolver       — Tier 2: Transformer Neural Operator (Transolver++)
+#   clifford         — Tier 2: Clifford Neural Operator (Geometric Algebra)
+model_version: deeponet_fourier
+
+# Backward-compat alias (read by older code paths)
 operator: deeponet_fourier
+
+# Optional Tier-3 extensions (independent of operator above)
+enable_temporal_model: false   # set to: mamba | liquid_nn
+enable_diffusion:      false   # set to: true to enable DDPM turbulence
 
 # ---------------------------------------------------------------------------
 # Loss function toggles

@@ -1,3 +1,4 @@
+
 # Core dependencies
 torch>=2.0.0
 torchvision>=0.15.0
@@ -22,6 +23,9 @@ h5py==3.11.0; platform_system == "Windows"
 tqdm>=4.65.0
 PyYAML>=6.0
 
+
+
 # CUDA support
 # For RTX 4060: Install PyTorch with CUDA 11.8 or 12.1
 # pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+

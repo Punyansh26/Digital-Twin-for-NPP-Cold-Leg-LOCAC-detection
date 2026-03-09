@@ -121,6 +121,41 @@ python scripts/generate_dataset.py --run-fluent
 # Continue with steps 2-6 as above
 ```
 
+## 🏗️ Selecting Model Architectures
+
+The pipeline supports four neural operator architectures across three tiers.
+Use the `--model-version` flag on any script, or set `model_version` in
+`configs/model_config.yaml`.
+
+| Flag value | Tier | Description |
+|---|---|---|
+| `deeponet_fourier` | Tier 1 | Optimized DeepONet (Fourier + Sobolev + Divergence) — **default** |
+| `transolver` | Tier 2 | Transformer Neural Operator (Transolver++) |
+| `clifford` | Tier 2 | Clifford Neural Operator (Geometric Algebra) |
+| `deeponet` | Legacy | Baseline DeepONet (no Fourier features) |
+
+**Via the full pipeline:**
+```bash
+python run_pipeline.py --model-version deeponet_fourier   # Tier 1 (default)
+python run_pipeline.py --model-version transolver          # Tier 2 Transformer
+python run_pipeline.py --model-version clifford            # Tier 2 Clifford
+```
+
+**Via individual scripts:**
+```bash
+python scripts/train_deeponet.py  --model-version deeponet_fourier
+python scripts/train_operator.py  --model-version transolver
+python scripts/train_operator.py  --model-version clifford
+python scripts/run_inference.py   --model-version transolver
+```
+
+**Via config file** (`configs/model_config.yaml`):
+```yaml
+model_version: transolver   # applied when --model-version is not passed
+```
+
+> The CLI flag always takes precedence over the config file value.
+
 ## 🔧 Configuration
 
 Edit `configs/config.yaml` to customize:
