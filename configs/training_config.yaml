@@ -1,0 +1,71 @@
+# AP1000 Digital Twin — Training Configuration
+# =============================================
+# Shared training hyper-parameters used across all training scripts.
+
+training:
+  batch_size:    16
+  epochs:        500
+  learning_rate: 0.001
+  weight_decay:  1.0e-5
+  optimizer:     adam
+
+  scheduler:
+    type:     ReduceLROnPlateau
+    patience: 20
+    factor:   0.5
+    min_lr:   1.0e-6
+
+  early_stopping:
+    patience:  50
+    min_delta: 1.0e-6
+
+  mixed_precision:            true    # PyTorch AMP  (requires CUDA)
+  gradient_clip:              1.0     # max gradient norm (0 = disabled)
+  gradient_accumulation_steps: 1
+  num_workers:                0       # Windows: keep at 0
+
+# ---------------------------------------------------------------------------
+# Loss weights
+# ---------------------------------------------------------------------------
+loss_weights:
+  mse:        1.0
+  sobolev:    0.1
+  divergence: 0.01
+
+# ---------------------------------------------------------------------------
+# Data
+# ---------------------------------------------------------------------------
+data_paths:
+  dataset: data/deeponet_dataset/deeponet_dataset.h5
+  scalers: data/deeponet_dataset/scalers.pkl
+
+output_paths:
+  models:  results/models
+  plots:   results/plots
+  metrics: results/metrics
+
+# ---------------------------------------------------------------------------
+# Accuracy targets
+# ---------------------------------------------------------------------------
+accuracy_targets:
+  r2_score:          0.90
+  relative_l2_error: 0.10
+  mae_threshold:     0.05
+  derivative_l2_error: 0.20
+  wss_error:         0.15
+
+# ---------------------------------------------------------------------------
+# Benchmarking
+# ---------------------------------------------------------------------------
+benchmarking:
+  enabled:              true
+  cfd_reference_time:   3600    # seconds (1 h typical Fluent run)
+  target_speedup:       1000    # ×
+
+# ---------------------------------------------------------------------------
+# Validation test matrix
+# ---------------------------------------------------------------------------
+validation:
+  test_break_sizes:   [0.5, 2.0, 5.0, 8.0, 10.0]
+  test_velocities:    [4.0, 4.5, 5.0, 5.5, 6.0]
+  test_temperatures:  [290, 300, 305, 310, 320]

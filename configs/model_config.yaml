@@ -1,0 +1,105 @@
+# AP1000 Digital Twin — Model Architecture Configuration
+# =========================================================
+# Controls which operator is active and all associated hyper-parameters.
+# Used by scripts/train_deeponet.py, scripts/train_operator.py, and
+# scripts/run_inference.py.
+
+# ---------------------------------------------------------------------------
+# Active operator
+# ---------------------------------------------------------------------------
+# Options: deeponet | deeponet_fourier | transolver | clifford
+operator: deeponet_fourier
+
+# ---------------------------------------------------------------------------
+# Loss function toggles
+# ---------------------------------------------------------------------------
+use_sobolev_loss:          true
+sobolev_alpha:             1.0     # MSE weight
+sobolev_beta:              0.1     # gradient-error weight
+
+use_divergence_penalty:    true
+divergence_weight:         0.01    # λ for ||∇·u||² penalty
+
+# Optional multi-fidelity residual learning (requires two datasets)
+use_residual_multifidelity: false
+
+# ---------------------------------------------------------------------------
+# Fourier-Enhanced DeepONet
+# ---------------------------------------------------------------------------
+deeponet:                          # legacy key — used as fallback
+  branch_net:
+    input_dim:   3                 # [velocity, break_size, temperature]
+    hidden_dims: [256, 512, 512]
+    output_dim:  256
+  trunk_net:
+    input_dim:   3
+    hidden_dims: [256, 512, 256]
+    output_dim:  256
+  output_fields: ["pressure", "velocity_magnitude", "turbulence_k", "temperature"]
+  n_outputs: 4
+
+fourier_deeponet:
+  branch_net:
+    input_dim:   3                 # [velocity, break_size, temperature]
+    hidden_dims: [128, 256]        # reduced width vs. original
+    output_dim:  256
+  trunk_net:
+    coord_dim:     3               # (x, y, z)
+    hidden_dims:   [256, 256]
+    output_dim:    256
+    mapping_size:  256             # m — output dim = 2m = 512
+    fourier_scale: 10.0            # σ of random frequency matrix B
+  output_fields: ["pressure", "velocity_magnitude", "turbulence_k", "temperature"]
+  n_outputs: 4
+
+# ---------------------------------------------------------------------------
+# Transolver++ Operator
+# ---------------------------------------------------------------------------
+transolver:
+  coord_dim:  3
+  branch_dim: 3
+  embed_dim:  256
+  n_tokens:   64
+  n_layers:   4
+  n_heads:    8       # must divide embed_dim
+  n_outputs:  4
+  dropout:    0.1
+
+# ---------------------------------------------------------------------------
+# Clifford Neural Operator
+# ---------------------------------------------------------------------------
+clifford:
+  coord_dim:  3
+  branch_dim: 3
+  n_channels: 32
+  n_layers:   4
+  n_outputs:  4
+
+# ---------------------------------------------------------------------------
+# Temporal extensions  (optional — set temporal_model: none to disable)
+# ---------------------------------------------------------------------------
+# Options: none | mamba | liquid_nn
+temporal_model: none
+
+mamba:
+  state_dim: 16
+  d_model:   128
+  n_layers:  4
+  d_state:   16
+  dropout:   0.1
+
+liquid_nn:
+  n_sensors:   8
+  hidden_size: 64
+  latent_dim:  32
+  n_layers:    2
+
+# ---------------------------------------------------------------------------
+# Diffusion turbulence model  (optional)
+# ---------------------------------------------------------------------------
+diffusion_model:     false
+
+diffusion_turbulence:
+  n_fields:     4
+  cond_dim:     8
+  n_diff_steps: 1000
