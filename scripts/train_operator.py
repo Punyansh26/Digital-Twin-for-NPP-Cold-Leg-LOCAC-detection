@@ -80,8 +80,11 @@ class OperatorTrainer:
         print(f"Training {operator} on {self.device}")
 
         # Data
+        h5_path = (
+            project_root / "data" / "deeponet_dataset" / "deeponet_dataset.h5"
+        )
         self.train_loader, self.val_loader, self.test_loader = create_dataloaders(
-            config=self.config, batch_size=batch_size, num_workers=0
+            h5_path=h5_path, batch_size=batch_size, num_workers=0
         )
         print(f"  Train: {len(self.train_loader)} batches | "
               f"Val: {len(self.val_loader)} batches | "

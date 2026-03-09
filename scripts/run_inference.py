@@ -422,10 +422,30 @@ def main() -> None:
         except Exception:
             pass
 
-    operator_ckpt = models_dir / "best_model.pth"
+    # Resolve the correct checkpoint for the requested architecture.
+    # train_operator.py saves  → results/models/<operator>_best.pth
+    # train_deeponet.py saves  → results/models/best_model.pth
+    _CKPT_MAP = {
+        "transolver":      models_dir / "transolver_best.pth",
+        "clifford":        models_dir / "clifford_best.pth",
+        "mamba":           models_dir / "mamba_best.pth",
+        "diffusion":       models_dir / "diffusion_model.pth",
+        "deeponet_fourier": models_dir / "best_model.pth",
+        "deeponet":        models_dir / "best_model.pth",
+    }
+    operator_ckpt = _CKPT_MAP.get(operator, models_dir / "best_model.pth")
     locac_ckpt    = models_dir / "locac_detector.pkl"
 
-    for p_req in [operator_ckpt, locac_ckpt, scalers_path]:
+    if not operator_ckpt.exists():
+        print(f"ERROR: No checkpoint found for '{operator}' at {operator_ckpt}")
+        if operator in ("transolver", "clifford"):
+            print(f"  Train it first:  python scripts/train_operator.py --model-version {operator}")
+        elif operator in ("mamba", "diffusion"):
+            print(f"  Train it first:  python scripts/train_deeponet.py --model-version {operator}")
+        else:
+            print("  Train it first:  python scripts/train_deeponet.py")
+        return
+    for p_req in [locac_ckpt, scalers_path]:
         if not p_req.exists():
             print(f"ERROR: Required file not found: {p_req}")
             print("Train models first:  train_deeponet.py + train_locac_model.py")
