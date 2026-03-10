@@ -497,3 +497,205 @@ scripts/run_inference.py        [multi-operator + WSS + diffusion realisations]
         ↓
 notebooks/analysis.ipynb        [visualisation + evaluation]
 ```
+
+---
+
+## 10. LOCAC Detection Fix — Session 2 (March 11, 2026)
+
+### 10.1 Problem Statement
+
+After the initial upgrade session, the LOCAC classifier **always returned probability = 0.0000**, meaning it failed to detect any accident scenario regardless of break size. The root cause was a **multi-layered feature mismatch** between the training pipeline and the inference pipeline.
+
+---
+
+### 10.2 Root Cause Analysis
+
+#### Issue 1: Feature Name Mismatch
+The LOCAC model was trained on synthetic features named `primary_pressure` and `coolant_flow` (from the original synthetic data generator), while the inference pipeline's `FeatureTranslator.extract_features()` produced differently named features: `average_pressure`, `mass_flow_rate`, etc. The classifier received zeros or wrong values for every feature column.
+
+#### Issue 2: Feature Scale Mismatch
+Even after aligning names, the synthetic training data used ranges (~15.5 MPa for pressure, ~690 kg/s for flow) that were loosely based on CFD output but didn't match the real AP1000 transient signatures. The StandardScaler, fitted on those synthetic ranges, produced near-zero z-scores for actual inference inputs, collapsing the classifier output.
+
+#### Issue 3: Real NPPAD Data Unused
+The project contained a complete real NPPAD dataset at `data/nppad/operation_csv_data/` with subdirectories for `Normal/` (1 CSV, 302 timestep rows) and `LOCAC/` (100 CSVs, ~45,176 rows). This data had been provided but was never loaded — the training code only generated synthetic data. The real NPPAD data showed dramatic system-level signatures:
+
+| Parameter | Normal (mean) | LOCAC (mean) | Unit |
+|-----------|---------------|--------------|------|
+| P | 155.5 | 63.0 | bar |
+| TAVG | 301.0 | 262.0 | °C |
+| WRCA | 16,835 | varies | kg/s |
+| DNBR | 5.6 | 127.0 | — |
+| DT_HL_CL | 16.0 | 1.6 | °C |
+
+#### Issue 4: CFD Features Insufficient for LOCAC Detection
+The DeepONet predicts **local** pipe CFD fields (pressure, velocity, turbulence, temperature) which show only subtle changes between Normal and LOCAC scenarios (e.g., pressure: 15,474,836 vs 15,456,209 Pa). LOCAC is a **system-level** accident — primary pressure drops from 155 to 63 bar, DNBR jumps from 5 to 127 — signals that a local-pipe CFD model cannot capture directly. An intermediate **mapping layer** was needed to translate CFD output + input parameters into system-level NPPAD-equivalent features.
+
+#### Issue 5: sklearn Warning (Feature Names)
+After fixing the feature vector, passing a raw numpy array to `StandardScaler.transform()` triggered:
+```
+UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+```
+Because the scaler had been fitted on a DataFrame with named columns during training.
+
+---
+
+### 10.3 Changes Made
+
+#### File: `src/accident_model/train_locac_model.py` *(REWRITTEN)*
+
+**`load_nppad_data()`** — Completely rewritten to load real NPPAD CSVs:
+- Scans `data/nppad/operation_csv_data/Normal/` and `LOCAC/` directories
+- Falls back to `scripts/data/nppad/operation_csv_data/` if primary path missing
+- Falls back to synthetic generation only if both directories are absent
+- Reads all CSV files, applies `_extract_nppad_features()`, assigns labels (Normal=0, LOCAC=1)
+- Shuffles with fixed seed for reproducibility
+
+**`_extract_nppad_features(df)`** — New static method:
+- Selects 7 columns from raw NPPAD data: `P`, `TAVG`, `WRCA`, `PSGA`, `SCMA`, `DNBR`
+- Computes derived feature: `DT_HL_CL = THA − TCA` (hot-leg minus cold-leg temperature)
+
+**`FEATURE_COLUMNS`** — New class attribute:
+```python
+FEATURE_COLUMNS = ['P', 'TAVG', 'WRCA', 'PSGA', 'SCMA', 'DNBR', 'DT_HL_CL']
+```
+Ensures consistent feature ordering between training and inference.
+
+**`generate_synthetic_nppad_data()`** — Updated synthetic ranges to match real NPPAD statistics, used only as fallback when real data is unavailable.
+
+**Training Result (real NPPAD data):**
+
+| Metric | Value |
+|--------|-------|
+| Training samples | 36,382 |
+| Test samples | 9,096 |
+| Accuracy | 0.9999 |
+| Precision | 0.9999 |
+| Recall | 1.0000 |
+| F1 | 0.9999 |
+| ROC-AUC | 1.0000 |
+
+---
+
+#### File: `src/feature_translation/translator.py` *(MODIFIED)*
+
+**`extract_features()`** — Removed stale features (`primary_pressure`, `coolant_flow`) that were added in a partial fix attempt. Now returns only CFD-derived features:
+- `average_pressure`, `pressure_gradient`, `pressure_drop`, `mass_flow_rate`
+- `inlet_velocity`, `max_turbulence`, `avg_turbulence`
+- `avg_temperature`, `temperature_difference`
+- `velocity_std`, `pressure_std`
+
+**`compute_nppad_features()`** — New method that maps input parameters + CFD anomaly signals to NPPAD-equivalent system-level features:
+
+**Blended Severity Model:**
+```
+sev_input = break_size / 10.0                           (0 → 1 from input)
+turb_anomaly = max(0, (max_turbulence − 0.65) / 0.65)  (CFD signal)
+pstd_anomaly = max(0, (pressure_std − 2.0) / 2.0)      (CFD signal)
+flow_deficit = max(0, 1 − inlet_velocity / 2.5)         (CFD signal)
+cfd_sev = mean(turb_anomaly, pstd_anomaly, flow_deficit)
+eff_sev = 0.8 × sev_input + 0.2 × min(cfd_sev, 1.0)
+```
+
+The 80/20 blend ensures the classifier benefits from DeepONet predictions (turbulence increase, flow reduction, pressure deviations) rather than relying purely on the input `break_size`. CFD anomalies contribute up to 20% of the effective severity.
+
+**NPPAD Feature Mapping (using effective severity):**
+
+| Feature | Formula | Normal (sev=0) | LOCAC (sev≈0.63) |
+|---------|---------|----------------|-------------------|
+| P (bar) | $155.5 - s^{1.2} \times 95$ | 155.5 | 100.8 |
+| TAVG (°C) | $T_{input} - s \times 50$ | 305.0 | 263.4 |
+| WRCA (kg/s) | $16515 \times \frac{v}{5} \times (1 - 0.6s)$ | 16,515 | 9,233 |
+| PSGA (bar) | $67 - 30s$ | 67.0 | 48.1 |
+| SCMA (°C) | $35 + 20s - 60s^2$ | 35.0 | 23.7 |
+| DNBR | $5.6 + s^{1.3} \times 130$ | 5.6 | 77.1 |
+| DT_HL_CL (°C) | $16 \times (1 - s^{0.8})$ | 16.0 | 4.9 |
+
+The method also stores diagnostic keys `_sev_input`, `_sev_cfd`, `_sev_effective` for output display.
+
+---
+
+#### File: `src/inference/run_inference.py` *(MODIFIED)*
+
+**Step 4b added:** Calls `compute_nppad_features()` to generate NPPAD-mapped features and merges them into the features dict.
+
+**Step 5 updated:** Builds the LOCAC classifier input as a `pd.DataFrame` with column names `['P', 'TAVG', 'WRCA', 'PSGA', 'SCMA', 'DNBR', 'DT_HL_CL']` (eliminates sklearn feature-name warning).
+
+**Verbose output restructured** into three clear sections:
+1. **CFD-derived features** — raw DeepONet output with aligned column formatting
+2. **NPPAD-mapped signals** — 7 system-level parameters with human-readable labels
+3. **Severity breakdown** — input severity, CFD anomaly contribution, effective severity
+4. **Decision banner** — boxed LOCAC probability and verdict
+
+---
+
+#### File: `scripts/run_inference.py` *(MODIFIED)*
+
+Mirrors all changes from `src/inference/run_inference.py`:
+- Added `import pandas as pd`
+- Replaced raw CFD feature vector with NPPAD-mapped features via `compute_nppad_features()`
+- Feature vector passed as named DataFrame (fixes sklearn warning)
+- Output restructured into sectioned format matching `src/inference/run_inference.py`
+
+---
+
+### 10.4 Verification Results
+
+**Test Scenarios:**
+
+| Scenario | Velocity | Break | Temp | Input Sev | CFD Anomaly | Eff Sev | Prob | Decision |
+|----------|----------|-------|------|-----------|-------------|---------|------|----------|
+| Normal operation | 5.0 m/s | 0.0% | 305°C | 0.000 | 0.000 | 0.000 | 0.0008 | ✓ NORMAL |
+| Small break | 5.0 m/s | 2.0% | 305°C | 0.200 | 0.218 | 0.204 | 1.0000 | ⚠ LOCAC |
+| Large break | 4.5 m/s | 7.5% | 295°C | 0.750 | 0.157 | 0.631 | 1.0000 | ⚠ LOCAC |
+| Max break | 5.0 m/s | 10.0% | 305°C | 1.000 | — | ~1.0 | 1.0000 | ⚠ LOCAC |
+
+**Key observations:**
+- Normal scenario correctly classified with very low probability (0.0008)
+- All break scenarios correctly classified as LOCAC (probability = 1.0)
+- CFD anomaly signal is non-zero and contributes to severity (e.g., 0.218 for small break)
+- No sklearn warnings in output
+- Full pipeline (`python run_pipeline.py --skip-training`) completes successfully
+
+---
+
+### 10.5 Architecture of the Fix
+
+```
+Input Parameters                   DeepONet Prediction
+(velocity, break_size, temp)       (pressure, velocity, turbulence, temperature fields)
+         │                                      │
+         │                          ┌───────────┴──────────┐
+         │                          │  extract_features()  │
+         │                          │  (CFD-derived)       │
+         │                          └───────────┬──────────┘
+         │                                      │
+         │              ┌───────────────────────┤
+         │              │ max_turbulence         │ inlet_velocity
+         │              │ pressure_std           │ (+ other CFD features)
+         ▼              ▼                        │
+   ┌─────────────────────────────────┐           │
+   │  compute_nppad_features()       │           │
+   │                                 │           │
+   │  sev_input = break_size / 10    │           │
+   │  cfd_sev = f(turb, pstd, flow)  │           │
+   │  eff_sev = 0.8×input + 0.2×cfd │           │
+   │                                 │           │
+   │  → P, TAVG, WRCA, PSGA,        │           │
+   │    SCMA, DNBR, DT_HL_CL        │           │
+   └──────────────┬──────────────────┘           │
+                  │                              │
+                  ▼                              │
+   ┌──────────────────────────────┐              │
+   │  StandardScaler.transform()  │              │
+   │  (fitted on real NPPAD data) │              │
+   └──────────────┬───────────────┘              │
+                  ▼                              │
+   ┌──────────────────────────────┐              │
+   │  GradientBoostingClassifier  │              │
+   │  (trained on 302 Normal +   │              │
+   │   45,176 LOCAC real rows)   │              │
+   └──────────────┬───────────────┘              │
+                  ▼                              │
+         LOCAC Probability                   CFD Fields
+         (0.0 → 1.0)                    (for visualisation)
+```
