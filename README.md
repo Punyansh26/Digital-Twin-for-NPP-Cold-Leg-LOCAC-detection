@@ -156,7 +156,122 @@ model_version: transolver   # applied when --model-version is not passed
 
 > The CLI flag always takes precedence over the config file value.
 
-## 🔧 Configuration
+## � Complete CLI Flags Reference
+
+### `run_pipeline.py` — Full Pipeline
+
+| Flag | Type | Default | Description |
+|---|---|---|---|
+| `--use-mock-data` | flag | `False` | Use synthetic mock data instead of Fluent CFD simulations |
+| `--skip-training` | flag | `False` | Skip training and use existing saved models |
+| `--model-version` | string | `None` | Select neural operator architecture. Choices: `deeponet`, `deeponet_fourier`, `transolver`, `clifford`. Overrides `configs/model_config.yaml` |
+
+```bash
+python run_pipeline.py --use-mock-data --model-version deeponet_fourier
+python run_pipeline.py --skip-training --model-version transolver
+```
+
+### `scripts/train_deeponet.py` — Train DeepONet Models
+
+| Flag | Type | Default | Description |
+|---|---|---|---|
+| `--model-version` | string | `None` | Architecture to train. Choices: `deeponet`, `deeponet_fourier` |
+| `--operator` | string | `None` | Legacy alias for `--model-version`. Choices: `deeponet`, `deeponet_fourier` |
+| `--epochs` | int | config value | Number of training epochs |
+| `--lr` | float | config value | Learning rate |
+| `--sobolev-weight` | float | `0.1` | Weight for Sobolev (gradient) loss term |
+| `--divergence-weight` | float | `0.01` | Weight for divergence-free loss term |
+| `--no-sobolev` | flag | `False` | Disable Sobolev loss entirely |
+| `--no-divergence` | flag | `False` | Disable divergence loss entirely |
+| `--benchmark` | flag | `False` | Run a speed/accuracy benchmark after training |
+
+```bash
+python scripts/train_deeponet.py --model-version deeponet_fourier --epochs 300 --lr 5e-4
+python scripts/train_deeponet.py --model-version deeponet_fourier --no-sobolev --no-divergence
+python scripts/train_deeponet.py --model-version deeponet --benchmark
+```
+
+### `scripts/train_operator.py` — Train Tier-2 Operators (Transolver / Clifford)
+
+| Flag | Type | Default | Description |
+|---|---|---|---|
+| `--model-version` | string | `None` | Architecture to train. Choices: `transolver`, `clifford` |
+| `--operator` | string | `None` | Legacy alias for `--model-version`. Choices: `transolver`, `clifford` |
+| `--epochs` | int | `500` | Number of training epochs |
+| `--lr` | float | `1e-3` | Learning rate |
+| `--batch-size` | int | `16` | Training batch size |
+| `--config` | path | `configs/config.yaml` | Path to main config file |
+| `--model-config` | path | `configs/model_config.yaml` | Path to model architecture config file |
+
+```bash
+python scripts/train_operator.py --model-version transolver --epochs 300 --lr 5e-4
+python scripts/train_operator.py --model-version clifford --batch-size 8
+```
+
+### `scripts/train_diffusion.py` — Train Diffusion / Uncertainty Model
+
+| Flag | Type | Default | Description |
+|---|---|---|---|
+| `--operator-ckpt` | path | `results/models/best_model.pth` | Path to a pre-trained operator checkpoint |
+| `--config` | path | `configs/config.yaml` | Path to main config file |
+| `--model-config` | path | `configs/model_config.yaml` | Path to model architecture config file |
+| `--epochs` | int | `100` | Number of training epochs |
+| `--lr` | float | `1e-4` | Learning rate |
+| `--batch-size` | int | `8` | Training batch size |
+| `--demo` | flag | `False` | Generate sample realisations after training |
+| `--n-samples` | int | `5` | Number of demo samples to generate (used with `--demo`) |
+
+```bash
+python scripts/train_diffusion.py --epochs 200 --lr 2e-4 --batch-size 4
+python scripts/train_diffusion.py --demo --n-samples 10
+python scripts/train_diffusion.py --operator-ckpt results/models/transolver_best.pth
+```
+
+### `scripts/run_inference.py` — Run Inference / Predictions
+
+| Flag | Type | Default | Description |
+|---|---|---|---|
+| `--model-version` | string | `None` | Select model architecture. Choices: `deeponet`, `deeponet_fourier`, `transolver`, `clifford`, `mamba`, `diffusion` |
+| `--operator` | string | `deeponet_fourier` | Legacy alias for `--model-version`. Choices: `deeponet`, `deeponet_fourier`, `transolver`, `clifford` |
+| `--mode` | string | `single` | Inference mode. Choices: `single` (one case), `time_series` (temporal sequence), `benchmark` (speed test) |
+| `--velocity` | float | `5.0` | Inlet velocity in m/s |
+| `--break-size` | float | `2.0` | Pipe break size as % of diameter |
+| `--temperature` | float | `305.0` | Coolant temperature in °C |
+| `--diffusion` | int | `0` | Number of turbulence realisations via diffusion model (0 = disabled) |
+| `--wss` | flag | `False` | Compute wall shear stress in predictions |
+
+```bash
+python scripts/run_inference.py --model-version deeponet_fourier --mode single
+python scripts/run_inference.py --model-version transolver --mode benchmark
+python scripts/run_inference.py --velocity 8.0 --break-size 5.0 --temperature 310.0
+python scripts/run_inference.py --mode time_series --diffusion 10 --wss
+```
+
+### `scripts/generate_dataset.py` — Generate CFD Dataset
+
+| Flag | Type | Default | Description |
+|---|---|---|---|
+| `--run-fluent` | flag | `False` | Actually run ANSYS Fluent simulations (requires Fluent installed) |
+| `--config` | string | `configs/config.yaml` | Path to configuration file |
+
+```bash
+python scripts/generate_dataset.py --run-fluent
+python scripts/generate_dataset.py --config configs/custom_config.yaml
+```
+
+### `fluent/automation/generate_simulations.py` — Fluent Simulation Automation
+
+| Flag | Type | Default | Description |
+|---|---|---|---|
+| `--run` | flag | `False` | Run Fluent simulations (requires ANSYS Fluent) |
+| `--config` | string | `configs/config.yaml` | Path to configuration file |
+
+```bash
+python fluent/automation/generate_simulations.py --run
+python fluent/automation/generate_simulations.py --run --config configs/custom_config.yaml
+```
+
+## �🔧 Configuration
 
 Edit `configs/config.yaml` to customize:
 
