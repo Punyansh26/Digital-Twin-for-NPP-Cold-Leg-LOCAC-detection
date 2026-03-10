@@ -29,6 +29,7 @@ sys.path.insert(0, str(project_root))
 
 import h5py
 import numpy as np
+import pandas as pd
 import pickle
 import torch
 import yaml
@@ -240,30 +241,59 @@ class DigitalTwinInference:
             if verbose:
                 print(f"✓ Diffusion: {n_diffusion} turbulence realisations")
 
-        # Feature extraction
+        # Feature extraction (CFD-derived)
         features = self.translator.extract_features(fields, self.trunk_coords)
-        if verbose:
-            print("✓ Features:")
-            for k, v in features.items():
-                print(f"    {k}: {v:.4f}")
 
-        # LOCAC classification
-        fv = np.array([
-            features["average_pressure"],
-            features["mass_flow_rate"],
-            features["avg_temperature"],
-            features["pressure_drop"],
-            features["max_turbulence"],
-            features["temperature_difference"],
-            features["velocity_std"],
-        ]).reshape(1, -1)
+        # NPPAD-mapped system-level signals (uses CFD + input params)
+        nppad = self.translator.compute_nppad_features(
+            features, velocity, break_size, temperature
+        )
+        features.update(nppad)
+
+        if verbose:
+            print(f"\n\u2500\u2500 CFD-derived features \u2500\u2500")
+            cfd_keys = [k for k in features if not k.startswith(('nppad_', '_sev'))]
+            for k in cfd_keys:
+                print(f"    {k:28s} {features[k]:>14.4f}")
+            print(f"\n\u2500\u2500 NPPAD-mapped signals \u2500\u2500")
+            nppad_labels = {
+                'nppad_P': 'Primary Pressure (bar)',
+                'nppad_TAVG': 'Avg Coolant Temp (\u00b0C)',
+                'nppad_WRCA': 'RCS Flow Loop-A (kg/s)',
+                'nppad_PSGA': 'SG-A Pressure (bar)',
+                'nppad_SCMA': 'Subcooling Margin (\u00b0C)',
+                'nppad_DNBR': 'DNBR',
+                'nppad_DT_HL_CL': 'HL-CL \u0394T (\u00b0C)',
+            }
+            for key, label in nppad_labels.items():
+                print(f"    {label:28s} {features[key]:>14.4f}")
+            print(f"\n\u2500\u2500 Severity breakdown \u2500\u2500")
+            print(f"    Input severity:    {features.get('_sev_input', 0):.3f}")
+            print(f"    CFD anomaly:       {features.get('_sev_cfd', 0):.3f}")
+            print(f"    Effective severity: {features.get('_sev_effective', 0):.3f}")
+
+        # LOCAC classification using NPPAD features
+        _nppad_cols = ['P', 'TAVG', 'WRCA', 'PSGA', 'SCMA', 'DNBR', 'DT_HL_CL']
+        fv = pd.DataFrame([[
+            features['nppad_P'],
+            features['nppad_TAVG'],
+            features['nppad_WRCA'],
+            features['nppad_PSGA'],
+            features['nppad_SCMA'],
+            features['nppad_DNBR'],
+            features['nppad_DT_HL_CL'],
+        ]], columns=_nppad_cols)
         fv_scaled  = self.locac_scaler.transform(fv)
         locac_prob = self.locac_detector.predict_proba(fv_scaled)[0, 1]
         locac_det  = bool(locac_prob > 0.5)
 
         if verbose:
-            status = "⚠ LOCAC DETECTED!" if locac_det else "✓ NORMAL"
-            print(f"\n{status}  probability={locac_prob:.4f}")
+            status = '\u26a0 LOCAC DETECTED' if locac_det else '\u2713 NORMAL'
+            sep = '\u2500' * 40
+            print(f"\n{sep}")
+            print(f"  LOCAC Probability: {locac_prob:.4f}")
+            print(f"  Decision: {status}")
+            print(sep)
 
         result = {
             "input_params":      {"velocity": velocity, "break_size": break_size,

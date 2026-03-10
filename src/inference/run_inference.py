@@ -143,14 +143,30 @@ class DigitalTwinInference:
         features.update(nppad_features)
         
         if verbose:
-            print(f"\n✓ Extracted features:")
-            for key, value in features.items():
-                print(f"    {key}: {value:.4f}")
+            print(f"\n── CFD-derived features ──")
+            cfd_keys = [k for k in features if not k.startswith(('nppad_', '_sev'))]
+            for key in cfd_keys:
+                print(f"    {key:28s} {features[key]:>14.4f}")
+            print(f"\n── NPPAD-mapped signals ──")
+            nppad_labels = {
+                'nppad_P': 'Primary Pressure (bar)',
+                'nppad_TAVG': 'Avg Coolant Temp (°C)',
+                'nppad_WRCA': 'RCS Flow Loop-A (kg/s)',
+                'nppad_PSGA': 'SG-A Pressure (bar)',
+                'nppad_SCMA': 'Subcooling Margin (°C)',
+                'nppad_DNBR': 'DNBR',
+                'nppad_DT_HL_CL': 'HL-CL ΔT (°C)',
+            }
+            for key, label in nppad_labels.items():
+                print(f"    {label:28s} {features[key]:>14.4f}")
+            print(f"\n── Severity breakdown ──")
+            print(f"    Input severity:    {features.get('_sev_input', 0):.3f}")
+            print(f"    CFD anomaly:       {features.get('_sev_cfd', 0):.3f}")
+            print(f"    Effective severity: {features.get('_sev_effective', 0):.3f}")
         
         # Step 5: LOCAC detection
-        # Prepare feature vector for classifier (must match training feature order)
-        # Order: P, TAVG, WRCA, PSGA, SCMA, DNBR, DT_HL_CL
-        feature_vector = np.array([
+        _nppad_cols = ['P', 'TAVG', 'WRCA', 'PSGA', 'SCMA', 'DNBR', 'DT_HL_CL']
+        feature_vector = pd.DataFrame([[
             features['nppad_P'],
             features['nppad_TAVG'],
             features['nppad_WRCA'],
@@ -158,16 +174,19 @@ class DigitalTwinInference:
             features['nppad_SCMA'],
             features['nppad_DNBR'],
             features['nppad_DT_HL_CL'],
-        ]).reshape(1, -1)
+        ]], columns=_nppad_cols)
         
         feature_vector_scaled = self.locac_scaler.transform(feature_vector)
         locac_probability = self.locac_detector.predict_proba(feature_vector_scaled)[0, 1]
         locac_decision = locac_probability > 0.5
         
         if verbose:
-            print(f"\n✓ LOCAC Detection:")
-            print(f"    Probability: {locac_probability:.4f}")
-            print(f"    Decision: {'LOCAC DETECTED' if locac_decision else 'NORMAL'}")
+            status = '⚠ LOCAC DETECTED' if locac_decision else '✓ NORMAL'
+            sep = '─' * 40
+            print(f"\n{sep}")
+            print(f"  LOCAC Probability: {locac_probability:.4f}")
+            print(f"  Decision: {status}")
+            print(sep)
         
         # Compile results
         results = {

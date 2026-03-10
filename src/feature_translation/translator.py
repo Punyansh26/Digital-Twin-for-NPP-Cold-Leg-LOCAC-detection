@@ -74,13 +74,6 @@ class FeatureTranslator:
         features['mass_flow_rate'] = mass_flow_rate
         features['inlet_velocity'] = inlet_velocity
         
-        # Primary system pressure (AP1000 reference: ~15.5 MPa nominal)
-        # Scale CFD local pressure to primary system level
-        features['primary_pressure'] = inlet_pressure
-        
-        # Coolant flow (system-level, matching NPPAD training scale)
-        features['coolant_flow'] = mass_flow_rate
-        
         # 4. Maximum turbulence
         features['max_turbulence'] = np.max(fields_dict['turbulence_k'])
         features['avg_turbulence'] = np.mean(fields_dict['turbulence_k'])
@@ -100,47 +93,51 @@ class FeatureTranslator:
         Map DeepONet CFD output + input parameters to NPPAD-equivalent
         system-level features for LOCAC classification.
 
-        The NPPAD data captures full-system reactor behaviour during LOCAC:
-          Normal: P~155 bar, TAVG~301°C, DNBR~5.6, DT_HL_CL~16°C
-          LOCAC : P~ 63 bar, TAVG~262°C, DNBR~127,  DT_HL_CL~1.6°C
-
-        The DeepONet predicts local pipe fields; break_size is the best
-        proxy for how far the accident has progressed system-wide.
+        Uses both the input parameters (break_size drives the accident
+        severity) AND CFD-derived anomaly signals (turbulence, pressure
+        deviation, flow changes) so the LOCAC classifier benefits from
+        actual DeepONet predictions.
         """
         nppad = {}
 
-        # Severity factor: 0 for no break, ~1 for 10 % break
-        sev = break_size / 10.0
+        # --- Severity from input + CFD anomaly signals ---
+        sev = break_size / 10.0   # 0..1 from input
+
+        # CFD anomaly: normalised deviation from nominal values
+        turb_anomaly = max(0.0, (features['max_turbulence'] - 0.65) / 0.65)
+        pstd_anomaly = max(0.0, (features['pressure_std'] - 2.0) / 2.0)
+        flow_deficit = max(0.0, 1.0 - features['inlet_velocity'] / 2.5)
+
+        # Blended severity: input-driven + CFD-correction (20 % weight)
+        cfd_sev = (turb_anomaly + pstd_anomaly + flow_deficit) / 3.0
+        eff_sev = 0.8 * sev + 0.2 * min(cfd_sev, 1.0)
 
         # --- P (primary pressure, bar) ---
-        # Nominal ~155.5 bar, LOCAC mean ~63 bar
-        nppad['nppad_P'] = 155.5 - sev ** 1.2 * 95.0
+        nppad['nppad_P'] = 155.5 - eff_sev ** 1.2 * 95.0
 
         # --- TAVG (average coolant temperature, °C) ---
-        # Nominal ~310°C input, LOCAC drops because of ECCS injection
-        nppad['nppad_TAVG'] = temperature - sev ** 1.0 * 50.0
+        nppad['nppad_TAVG'] = temperature - eff_sev * 50.0
 
         # --- WRCA (reactor coolant flow, kg/s) ---
-        # Nominal ~16515 at full speed; drops during LOCAC
         flow_ratio = velocity / 5.0
-        nppad['nppad_WRCA'] = 16515.0 * flow_ratio * (1.0 - sev * 0.6)
+        nppad['nppad_WRCA'] = 16515.0 * flow_ratio * (1.0 - eff_sev * 0.6)
 
         # --- PSGA (SG-A pressure, bar) ---
-        # Nominal ~67 bar, drops during LOCAC
-        nppad['nppad_PSGA'] = 67.0 - sev * 30.0
+        nppad['nppad_PSGA'] = 67.0 - eff_sev * 30.0
 
         # --- SCMA (subcooling margin, °C) ---
-        # Nominal ~35°C, increases during depressurisation then may collapse
-        base_scma = 35.0
-        nppad['nppad_SCMA'] = base_scma + sev * 20.0 - sev ** 2 * 60.0
+        nppad['nppad_SCMA'] = 35.0 + eff_sev * 20.0 - eff_sev ** 2 * 60.0
 
-        # --- DNBR (departure from nucleate boiling ratio) ---
-        # Nominal ~5.6, during LOCAC jumps to >100 due to depressurisation
-        nppad['nppad_DNBR'] = 5.6 + sev ** 1.3 * 130.0
+        # --- DNBR ---
+        nppad['nppad_DNBR'] = 5.6 + eff_sev ** 1.3 * 130.0
 
         # --- DT_HL_CL (hot-leg – cold-leg ΔT, °C) ---
-        # Nominal ~16°C, collapses toward 0 during LOCAC
-        nppad['nppad_DT_HL_CL'] = 16.0 * (1.0 - sev ** 0.8)
+        nppad['nppad_DT_HL_CL'] = 16.0 * (1.0 - eff_sev ** 0.8)
+
+        # Store severity info for diagnostics
+        nppad['_sev_input'] = sev
+        nppad['_sev_cfd'] = cfd_sev
+        nppad['_sev_effective'] = eff_sev
 
         return nppad
     
