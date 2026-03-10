@@ -48,94 +48,114 @@ class LOCACDetector:
         
         self.scaler = StandardScaler()
         
+    # NPPAD columns used for LOCAC detection (must match inference feature order)
+    FEATURE_COLUMNS = ['P', 'TAVG', 'WRCA', 'PSGA', 'SCMA', 'DNBR', 'DT_HL_CL']
+
     def load_nppad_data(self):
         """
-        Load and process NPPAD dataset
-        
-        Note: NPPAD dataset structure needs to be adapted to your actual data
-        This is a template that should be modified based on actual NPPAD format
+        Load and process real NPPAD dataset from data/nppad/operation_csv_data/.
+        Uses Normal/ and LOCAC/ subdirectories. Each CSV has time-series rows
+        with columns like P, TAVG, WRCA, PSGA, SCMA, DNBR, THA, TCA, etc.
         """
-        nppad_dir = self.project_root / "data" / "nppad"
-        
-        # Check if NPPAD data exists
+        nppad_dir = self.project_root / "data" / "nppad" / "operation_csv_data"
+
+        # Fall back to scripts/data/nppad if main data dir missing
         if not nppad_dir.exists():
-            print(f"WARNING: NPPAD directory not found: {nppad_dir}")
-            print("Using synthetic data for demonstration...")
+            nppad_dir = self.project_root / "scripts" / "data" / "nppad" / "operation_csv_data"
+
+        normal_dir = nppad_dir / "Normal"
+        locac_dir = nppad_dir / "LOCAC"
+
+        if not normal_dir.exists() or not locac_dir.exists():
+            print("WARNING: NPPAD Normal/LOCAC dirs not found, using synthetic data...")
             return self.generate_synthetic_nppad_data()
-        
-        # Load operation and dose data
-        operation_dir = nppad_dir / "operation_csv_data"
-        dose_dir = nppad_dir / "dose_csv_data"
-        
-        if not operation_dir.exists():
-            print("WARNING: NPPAD data not found, using synthetic data...")
-            return self.generate_synthetic_nppad_data()
-        
-        # Load CSV files
-        all_data = []
+
+        all_rows = []
         all_labels = []
-        
-        for csv_file in operation_dir.glob("*.csv"):
+
+        # Load Normal data (label=0)
+        for csv_file in sorted(normal_dir.glob("*.csv")):
             df = pd.read_csv(csv_file)
-            
-            # Extract relevant features (adjust column names based on actual data)
-            # Example columns: 'primary_pressure', 'coolant_flow', 'temperature', etc.
-            
-            # Determine if LOCAC based on filename or column
-            is_locac = 'loca' in csv_file.stem.lower()
-            
-            all_data.append(df)
-            all_labels.extend([int(is_locac)] * len(df))
-        
-        # Combine data
-        combined_df = pd.concat(all_data, ignore_index=True)
-        
-        return combined_df, np.array(all_labels)
-    
-    def generate_synthetic_nppad_data(self):
-        """Generate synthetic NPPAD-like data for demonstration"""
-        
-        print("Generating synthetic NPPAD data...")
-        
-        n_normal = 1000
-        n_locac = 400
-        
-        # Normal operation
-        normal_data = {
-            'primary_pressure': np.random.normal(15.5e6, 0.1e6, n_normal),
-            'coolant_flow': np.random.normal(15000, 500, n_normal),
-            'temperature': np.random.normal(305, 5, n_normal),
-            'pressure_drop': np.random.normal(50000, 5000, n_normal),
-            'max_turbulence': np.random.normal(0.5, 0.1, n_normal),
-            'temperature_difference': np.random.normal(5, 1, n_normal),
-            'velocity_std': np.random.normal(0.2, 0.05, n_normal),
-        }
-        
-        # LOCAC events
-        locac_data = {
-            'primary_pressure': np.random.normal(13.0e6, 1.0e6, n_locac),  # Lower pressure
-            'coolant_flow': np.random.normal(10000, 2000, n_locac),  # Reduced flow
-            'temperature': np.random.normal(280, 15, n_locac),  # Lower temp
-            'pressure_drop': np.random.normal(100000, 20000, n_locac),  # Higher drop
-            'max_turbulence': np.random.normal(2.0, 0.5, n_locac),  # Higher turbulence
-            'temperature_difference': np.random.normal(20, 5, n_locac),  # Larger variation
-            'velocity_std': np.random.normal(0.8, 0.2, n_locac),  # Higher variation
-        }
-        
-        # Combine
-        normal_df = pd.DataFrame(normal_data)
-        locac_df = pd.DataFrame(locac_data)
-        
-        combined_df = pd.concat([normal_df, locac_df], ignore_index=True)
-        labels = np.array([0] * n_normal + [1] * n_locac)
-        
+            df = self._extract_nppad_features(df)
+            all_rows.append(df)
+            all_labels.extend([0] * len(df))
+
+        # Load LOCAC data (label=1)
+        for csv_file in sorted(locac_dir.glob("*.csv")):
+            df = pd.read_csv(csv_file)
+            df = self._extract_nppad_features(df)
+            all_rows.append(df)
+            all_labels.extend([1] * len(df))
+
+        combined_df = pd.concat(all_rows, ignore_index=True)
+        labels = np.array(all_labels)
+
         # Shuffle
-        shuffle_idx = np.random.permutation(len(labels))
+        shuffle_idx = np.random.RandomState(42).permutation(len(labels))
         combined_df = combined_df.iloc[shuffle_idx].reset_index(drop=True)
         labels = labels[shuffle_idx]
-        
+
+        n_normal = int((labels == 0).sum())
+        n_locac = int((labels == 1).sum())
+        print(f"✓ Loaded NPPAD data: {n_normal} normal rows, {n_locac} LOCAC rows")
+
+        return combined_df, labels
+
+    @staticmethod
+    def _extract_nppad_features(df):
+        """Select / compute the 7 features used for classification."""
+        out = pd.DataFrame()
+        out['P'] = df['P']                    # Primary pressure (bar)
+        out['TAVG'] = df['TAVG']              # Average temperature (°C)
+        out['WRCA'] = df['WRCA']              # Reactor coolant flow loop-A (kg/s)
+        out['PSGA'] = df['PSGA']              # SG-A pressure (bar)
+        out['SCMA'] = df['SCMA']              # Subcooling margin A (°C)
+        out['DNBR'] = df['DNBR']              # Departure from nucleate boiling ratio
+        out['DT_HL_CL'] = df['THA'] - df['TCA']  # Hot-leg minus cold-leg temp (°C)
+        return out
+    
+    def generate_synthetic_nppad_data(self):
+        """Generate synthetic NPPAD-like data matching real column names."""
+
+        print("Generating synthetic NPPAD data...")
+
+        n_normal = 1000
+        n_locac = 400
+        rng = np.random.RandomState(42)
+
+        # Normal operation (based on real NPPAD ranges)
+        normal_data = {
+            'P':         rng.normal(155.5, 0.3, n_normal),       # bar
+            'TAVG':      rng.normal(310.0, 2.0, n_normal),       # °C
+            'WRCA':      rng.normal(16515, 100, n_normal),       # kg/s
+            'PSGA':      rng.normal(67.0, 0.5, n_normal),        # bar
+            'SCMA':      rng.normal(17.2, 0.3, n_normal),        # °C
+            'DNBR':      rng.normal(2.3, 0.05, n_normal),        # -
+            'DT_HL_CL':  rng.normal(35.6, 1.0, n_normal),        # °C
+        }
+
+        # LOCAC events (pressure drops, flows change, margins shrink)
+        locac_data = {
+            'P':         rng.normal(150.0, 3.0, n_locac),
+            'TAVG':      rng.normal(308.0, 5.0, n_locac),
+            'WRCA':      rng.normal(14000, 2000, n_locac),
+            'PSGA':      rng.normal(65.0, 2.0, n_locac),
+            'SCMA':      rng.normal(12.0, 3.0, n_locac),
+            'DNBR':      rng.normal(1.8, 0.3, n_locac),
+            'DT_HL_CL':  rng.normal(28.0, 5.0, n_locac),
+        }
+
+        normal_df = pd.DataFrame(normal_data)
+        locac_df = pd.DataFrame(locac_data)
+
+        combined_df = pd.concat([normal_df, locac_df], ignore_index=True)
+        labels = np.array([0] * n_normal + [1] * n_locac)
+
+        shuffle_idx = rng.permutation(len(labels))
+        combined_df = combined_df.iloc[shuffle_idx].reset_index(drop=True)
+        labels = labels[shuffle_idx]
+
         print(f"✓ Generated {n_normal} normal and {n_locac} LOCAC samples")
-        
         return combined_df, labels
     
     def train(self, X, y):

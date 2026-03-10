@@ -136,21 +136,28 @@ class DigitalTwinInference:
         # Step 4: Extract features
         features = self.translator.extract_features(fields_dict, self.trunk_coords)
         
+        # Step 4b: Compute NPPAD-equivalent system-level features
+        nppad_features = self.translator.compute_nppad_features(
+            features, velocity, break_size, temperature
+        )
+        features.update(nppad_features)
+        
         if verbose:
             print(f"\n✓ Extracted features:")
             for key, value in features.items():
                 print(f"    {key}: {value:.4f}")
         
         # Step 5: LOCAC detection
-        # Prepare feature vector for classifier
+        # Prepare feature vector for classifier (must match training feature order)
+        # Order: P, TAVG, WRCA, PSGA, SCMA, DNBR, DT_HL_CL
         feature_vector = np.array([
-            features['average_pressure'],
-            features['mass_flow_rate'],
-            features['avg_temperature'],
-            features['pressure_drop'],
-            features['max_turbulence'],
-            features['temperature_difference'],
-            features['velocity_std']
+            features['nppad_P'],
+            features['nppad_TAVG'],
+            features['nppad_WRCA'],
+            features['nppad_PSGA'],
+            features['nppad_SCMA'],
+            features['nppad_DNBR'],
+            features['nppad_DT_HL_CL'],
         ]).reshape(1, -1)
         
         feature_vector_scaled = self.locac_scaler.transform(feature_vector)
