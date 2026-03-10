@@ -108,9 +108,10 @@ feature_translation:
 locac_model:
   type: "gradient_boosting"  # or "neural_network"
   gb_params:
-    n_estimators: 500
-    max_depth: 7
+    n_estimators: 200
+    max_depth: 4
     learning_rate: 0.05
+    min_samples_leaf: 20
   nn_params:
     hidden_dims: [128, 64, 32]
     dropout: 0.3

@@ -90,6 +90,11 @@ class LOCACDetector:
         combined_df = pd.concat(all_rows, ignore_index=True)
         labels = np.array(all_labels)
 
+        # Add transitional samples that bridge the Normal↔LOCAC gap
+        trans_df, trans_labels = self._generate_transitional_data(combined_df, labels)
+        combined_df = pd.concat([combined_df, trans_df], ignore_index=True)
+        labels = np.concatenate([labels, trans_labels])
+
         # Shuffle
         shuffle_idx = np.random.RandomState(42).permutation(len(labels))
         combined_df = combined_df.iloc[shuffle_idx].reset_index(drop=True)
@@ -97,9 +102,51 @@ class LOCACDetector:
 
         n_normal = int((labels == 0).sum())
         n_locac = int((labels == 1).sum())
-        print(f"✓ Loaded NPPAD data: {n_normal} normal rows, {n_locac} LOCAC rows")
+        n_trans = len(trans_labels)
+        print(f"✓ Loaded NPPAD data: {n_normal} normal, {n_locac} LOCAC rows")
+        print(f"  (includes {n_trans} transitional samples for probability calibration)")
 
         return combined_df, labels
+
+    @staticmethod
+    def _generate_transitional_data(combined_df, labels):
+        """
+        Generate synthetic transitional samples between Normal and LOCAC
+        distributions.  This fills the gap in the training data so the
+        GradientBoosting classifier learns to output graded probabilities
+        (0.1, 0.3, 0.5, …) instead of snapping to 0 or 1.
+
+        For each severity level s ∈ {0.05, 0.10, …, 0.95} we interpolate
+        the feature means/stds and assign label=1 with probability s.
+        """
+        rng = np.random.RandomState(123)
+        cols = LOCACDetector.FEATURE_COLUMNS
+
+        normal_mask = labels == 0
+        locac_mask = labels == 1
+        normal_mean = combined_df.loc[normal_mask, cols].mean().values
+        normal_std  = combined_df.loc[normal_mask, cols].std().values.clip(min=1e-6)
+        locac_mean  = combined_df.loc[locac_mask, cols].mean().values
+        locac_std   = combined_df.loc[locac_mask, cols].std().values.clip(min=1e-6)
+
+        rows = []
+        row_labels = []
+        n_per_level = 200
+
+        for s in np.arange(0.05, 1.0, 0.05):  # 19 severity levels
+            mean_interp = normal_mean * (1 - s) + locac_mean * s
+            std_interp  = normal_std  * (1 - s) + locac_std  * s
+            samples = rng.normal(mean_interp, std_interp,
+                                 size=(n_per_level, len(cols)))
+            # Label each sample as LOCAC with probability = s
+            sample_labels = (rng.rand(n_per_level) < s).astype(int)
+            rows.append(samples)
+            row_labels.append(sample_labels)
+
+        trans_features = np.vstack(rows)
+        trans_labels   = np.concatenate(row_labels)
+        trans_df = pd.DataFrame(trans_features, columns=cols)
+        return trans_df, trans_labels
 
     @staticmethod
     def _extract_nppad_features(df):

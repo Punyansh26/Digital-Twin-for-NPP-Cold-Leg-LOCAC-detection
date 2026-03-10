@@ -93,27 +93,31 @@ class FeatureTranslator:
         Map DeepONet CFD output + input parameters to NPPAD-equivalent
         system-level features for LOCAC classification.
 
-        Uses both the input parameters (break_size drives the accident
-        severity) AND CFD-derived anomaly signals (turbulence, pressure
-        deviation, flow changes) so the LOCAC classifier benefits from
-        actual DeepONet predictions.
+        Uses a sigmoid severity curve so that:
+          - 0-2% break  → features near Normal  → low probability
+          - 3-5% break  → transition zone        → intermediate probability
+          - 5-8% break  → clearly shifted         → high probability
+          - 8-10% break → deep LOCAC              → very high probability
         """
+        import math
         nppad = {}
 
-        # --- Severity from input + CFD anomaly signals ---
-        sev = break_size / 10.0   # 0..1 from input
+        # --- Sigmoid severity from input ---
+        # Centered at break_size=5%, steepness k=0.8
+        # Maps 0% → ~0.02, 2% → ~0.08, 5% → 0.50, 8% → ~0.92, 10% → ~0.98
+        raw_sev = 1.0 / (1.0 + math.exp(-0.8 * (break_size - 5.0)))
 
-        # CFD anomaly: normalised deviation from nominal values
+        # CFD anomaly signals (normalised deviations from nominal)
         turb_anomaly = max(0.0, (features['max_turbulence'] - 0.65) / 0.65)
         pstd_anomaly = max(0.0, (features['pressure_std'] - 2.0) / 2.0)
         flow_deficit = max(0.0, 1.0 - features['inlet_velocity'] / 2.5)
 
-        # Blended severity: input-driven + CFD-correction (20 % weight)
+        # Blended severity: sigmoid-based input (80%) + CFD anomaly (20%)
         cfd_sev = (turb_anomaly + pstd_anomaly + flow_deficit) / 3.0
-        eff_sev = 0.8 * sev + 0.2 * min(cfd_sev, 1.0)
+        eff_sev = 0.8 * raw_sev + 0.2 * min(cfd_sev, 1.0)
 
         # --- P (primary pressure, bar) ---
-        nppad['nppad_P'] = 155.5 - eff_sev ** 1.2 * 95.0
+        nppad['nppad_P'] = 155.5 - eff_sev * 95.0
 
         # --- TAVG (average coolant temperature, °C) ---
         nppad['nppad_TAVG'] = temperature - eff_sev * 50.0
@@ -129,13 +133,13 @@ class FeatureTranslator:
         nppad['nppad_SCMA'] = 35.0 + eff_sev * 20.0 - eff_sev ** 2 * 60.0
 
         # --- DNBR ---
-        nppad['nppad_DNBR'] = 5.6 + eff_sev ** 1.3 * 130.0
+        nppad['nppad_DNBR'] = 5.6 + eff_sev * 130.0
 
         # --- DT_HL_CL (hot-leg – cold-leg ΔT, °C) ---
-        nppad['nppad_DT_HL_CL'] = 16.0 * (1.0 - eff_sev ** 0.8)
+        nppad['nppad_DT_HL_CL'] = 16.0 * (1.0 - eff_sev)
 
         # Store severity info for diagnostics
-        nppad['_sev_input'] = sev
+        nppad['_sev_input'] = raw_sev
         nppad['_sev_cfd'] = cfd_sev
         nppad['_sev_effective'] = eff_sev
 
