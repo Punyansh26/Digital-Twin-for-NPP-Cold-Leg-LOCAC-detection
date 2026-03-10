@@ -46,8 +46,7 @@ wheels/
 *.log
 
 # Results
-results/
-!results/.gitkeep
+
 
 # Data (except directory structure)
 data/fluent_raw/*
