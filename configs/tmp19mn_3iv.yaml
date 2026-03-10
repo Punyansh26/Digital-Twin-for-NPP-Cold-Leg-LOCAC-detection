@@ -1,0 +1,124 @@
+accuracy_targets:
+  mae_threshold: 0.05
+  r2_score: 0.9
+  relative_l2_error: 0.1
+data_paths:
+  deeponet_dataset: data/deeponet_dataset
+  fluent_processed: data/fluent_processed
+  fluent_raw: data/fluent_raw
+  nppad: data/nppad
+deeponet:
+  branch_net:
+    hidden_dims:
+    - 256
+    - 512
+    - 512
+    input_dim: 3
+    output_dim: 256
+  n_outputs: 4
+  output_fields:
+  - pressure
+  - velocity_magnitude
+  - turbulence_k
+  - temperature
+  trunk_net:
+    hidden_dims:
+    - 256
+    - 512
+    - 256
+    input_dim: 3
+    output_dim: 256
+device:
+  gpu_id: 0
+  use_cuda: true
+feature_translation:
+  extracted_features:
+  - average_pressure
+  - pressure_gradient
+  - mass_flow_rate
+  - max_turbulence
+  - temperature_difference
+  locac_score_weights:
+    flow_change: 0.3
+    pressure_drop: 0.35
+    temp_diff: 0.1
+    turbulence: 0.25
+fluent:
+  boundary_conditions:
+    inlet:
+      type: velocity-inlet
+      velocity_range:
+      - 4.0
+      - 6.0
+    outlet:
+      pressure: 15500000
+      type: pressure-outlet
+    wall:
+      type: no-slip
+  fluid:
+    density: 720
+    name: water
+  solver: pressure-based
+  solver_type: steady
+  turbulence_model: rng-k-epsilon
+geometry:
+  elbow_radius_factor: 1.5
+  pipe_diameter: 0.7
+  pipe_length_factor: 10
+  straight_after: 5
+  straight_before: 5
+locac_model:
+  gb_params:
+    learning_rate: 0.05
+    max_depth: 4
+    min_samples_leaf: 20
+    n_estimators: 200
+  nn_params:
+    dropout: 0.3
+    hidden_dims:
+    - 128
+    - 64
+    - 32
+  target_accuracy: 0.9
+  type: gradient_boosting
+mesh:
+  orthogonal_quality_min: 0.2
+  refinement_elbow: true
+  skewness_max: 0.85
+  target_cells: 25000
+output_paths:
+  metrics: results/metrics
+  models: results/models
+  plots: results/plots
+  predictions: results/predictions
+parameter_sweep:
+  break_size:
+    max: 10.0
+    min: 0.0
+    samples: 10
+  temperature:
+    max: 320
+    min: 290
+    samples: 10
+  total_simulations: 2000
+  velocity:
+    max: 6.0
+    min: 4.0
+    samples: 20
+training:
+  batch_size: 16
+  early_stopping:
+    min_delta: 1.0e-06
+    patience: 50
+  epochs: 2000
+  gradient_accumulation_steps: 1
+  learning_rate: 0.001
+  mixed_precision: true
+  num_workers: 0
+  optimizer: adam
+  scheduler:
+    factor: 0.5
+    patience: 20
+    type: ReduceLROnPlateau
+  test_split: 0.15
+  validation_split: 0.15
