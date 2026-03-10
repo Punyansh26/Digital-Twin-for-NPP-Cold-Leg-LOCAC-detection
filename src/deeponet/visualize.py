@@ -5,6 +5,8 @@ Generate contour plots and error heatmaps
 
 import torch
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
@@ -18,6 +20,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from src.deeponet.model import DeepONet
+from src.deeponet.deeponet_fourier import DeepONetFourier
 
 
 class DeepONetVisualizer:
@@ -28,6 +31,12 @@ class DeepONetVisualizer:
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
         
+        # Merge model_config if available (training script does this)
+        model_config_path = config_path.parent / 'model_config.yaml'
+        if model_config_path.exists():
+            with open(model_config_path, 'r') as f:
+                self.config.update(yaml.safe_load(f))
+        
         self.project_root = project_root
         self.output_dir = self.project_root / self.config['output_paths']['plots']
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -36,11 +45,16 @@ class DeepONetVisualizer:
         with open(scalers_path, 'rb') as f:
             self.scalers = pickle.load(f)
         
-        # Load model
+        # Load model — detect operator type from checkpoint
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.model = DeepONet(self.config).to(self.device)
+        checkpoint = torch.load(model_path, map_location=self.device, weights_only=False)
         
-        checkpoint = torch.load(model_path, map_location=self.device)
+        operator = checkpoint.get('operator', checkpoint.get('model_version', 'deeponet'))
+        if operator == 'deeponet_fourier':
+            self.model = DeepONetFourier.from_legacy_config(self.config).to(self.device)
+        else:
+            self.model = DeepONet(self.config).to(self.device)
+        
         self.model.load_state_dict(checkpoint['model_state_dict'])
         self.model.eval()
         
