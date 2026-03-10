@@ -15,7 +15,7 @@ import sys
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.deeponet.model import DeepONet
+from src.deeponet.deeponet_fourier import DeepONetFourier
 from src.feature_translation.translator import FeatureTranslator
 
 
@@ -29,6 +29,12 @@ class DigitalTwinInference:
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
         
+        # Merge model config (matches training setup)
+        model_config_path = Path(config_path).parent / "model_config.yaml"
+        if model_config_path.exists():
+            with open(model_config_path, 'r') as f:
+                self.config.update(yaml.safe_load(f))
+        
         self.project_root = project_root
         
         # Device
@@ -37,8 +43,8 @@ class DigitalTwinInference:
         
         # Load DeepONet
         print("Loading DeepONet...")
-        self.deeponet = DeepONet(self.config).to(self.device)
-        checkpoint = torch.load(deeponet_path, map_location=self.device)
+        self.deeponet = DeepONetFourier(self.config).to(self.device)
+        checkpoint = torch.load(deeponet_path, map_location=self.device, weights_only=True)
         self.deeponet.load_state_dict(checkpoint['model_state_dict'])
         self.deeponet.eval()
         print("✓ DeepONet loaded")
