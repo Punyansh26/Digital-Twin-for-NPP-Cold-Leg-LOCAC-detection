@@ -1,5 +1,8 @@
 """Master run script - Execute entire pipeline"""
 
+import os
+os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
+
 import sys
 import subprocess
 from pathlib import Path

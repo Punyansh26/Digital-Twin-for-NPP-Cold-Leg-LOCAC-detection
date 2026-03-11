@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
 import sys
 import tempfile
 import time
