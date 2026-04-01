@@ -25,7 +25,7 @@
 
 ## 1. Project Overview
 
-The AP1000 is a Westinghouse pressurised water reactor (PWR). Its **cold leg** is the pipe that carries cooled primary coolant back to the reactor core. A rupture anywhere in this loop is classified as a **Cold-Leg LOCA** event and demands immediate detection because delayed response can lead to core damage.
+The AP1000 is a Westinghouse pressurized water reactor (PWR). Its **cold leg** is the pipe that carries cooled primary coolant back to the reactor core. A rupture anywhere in this loop is classified as a **Cold-Leg LOCA** event and demands immediate detection because delayed response can lead to core damage.
 
 Traditional detection relies on CFD (Computational Fluid Dynamics) solvers (e.g. ANSYS Fluent), which take **hours per simulation**. This project replaces those solvers with **neural operators** that learn the input-to-solution mapping from pre-computed CFD data and run in **< 20 ms** — a 1000× speedup — while still obeying the underlying physics.
 
@@ -799,17 +799,18 @@ Sensor Series [B, T, n_sensors=8]     Timestamps [B, T]
 
 ### 8.4 NPPAD Sensor Features
 
-The 7 reactor signals used as inputs:
+The LOCA classifier downstream task uses **7 reactor signals** (see `LOCACDetector.FEATURE_COLUMNS`). The `LiquidNNSensorModel` default configuration sets `n_sensors: 8` to leave room for an optional eighth channel (e.g., neutron flux or mass flow derivative). When wired directly to the NPPAD dataset only the 7 signals below are active; the eighth channel is zero-padded or used for a site-specific extra reading.
 
 | Signal | Description |
 |--------|-------------|
 | P | Reactor coolant system pressure |
 | TAVG | Average coolant temperature |
 | WRCA | Reactor coolant flow rate |
-| PSGA | Pressuriser steam generator availability |
+| PSGA | Pressurizer steam generator availability |
 | SCMA | Safety injection signal |
 | DNBR | Departure from nucleate boiling ratio |
 | DT_HL_CL | Temperature differential (hot leg – cold leg) |
+| *(extra)* | Optional 8th channel (site-configurable) |
 
 ### 8.5 Parameters
 
@@ -1208,8 +1209,8 @@ Is data limited (< 200 simulations)?
 
 | Model | Target R² | Target Inference | Parameters | Training Time |
 |-------|-----------|-----------------|------------|---------------|
-| DeepONet Legacy | > 0.85 | < 5 ms | ~2.5M | ~10 min |
-| **DeepONetFourier** | **> 0.90** | **< 5 ms** | **~1.8M** | **~5 min** |
+| DeepONet Legacy | > 0.85 | < 5 ms | ~2.5M | ~10 min (wider layers) |
+| **DeepONetFourier** | **> 0.90** | **< 5 ms** | **~1.8M** | **~5 min (narrower but richer encoding)** |
 | Transolver++ | > 0.88 | < 15 ms | ~900K | ~15 min |
 | Clifford Operator | > 0.85 | < 5 ms | ~50K | ~8 min |
 | Mamba (temporal) | > 0.90 (seq) | < 10 ms/step | ~540K | ~10 min |
