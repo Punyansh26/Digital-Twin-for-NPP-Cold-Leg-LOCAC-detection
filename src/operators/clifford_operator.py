@@ -156,11 +156,10 @@ class PhysicsToMultivector(nn.Module):
         """Returns [..., out_channels, 8]"""
         *batch, _ = scalar.shape
         C = self.out_channels
-        mv = torch.zeros(*batch, C, 8, device=scalar.device, dtype=scalar.dtype)
-        mv[..., 0]   = self.scalar_proj(scalar)
-        vec = self.vector_proj(vector).reshape(*batch, C, 3)
-        mv[..., 1:4] = vec
-        return mv
+        s0 = self.scalar_proj(scalar).unsqueeze(-1)
+        v123 = self.vector_proj(vector).reshape(*batch, C, 3)
+        zeros = torch.zeros(*batch, C, 4, device=scalar.device, dtype=scalar.dtype)
+        return torch.cat([s0, v123, zeros], dim=-1)
 
 
 class MultivectorToFields(nn.Module):
@@ -249,7 +248,8 @@ class CliffordNeuralOperator(nn.Module):
             h     = norm(h)
             # Scalar-gate residual: activate only grade-0
             h     = h + h_res
-            h[..., 0] = F.gelu(h[..., 0])
+            h0    = F.gelu(h[..., 0:1])
+            h     = torch.cat([h0, h[..., 1:]], dim=-1)
 
         out = self.readout(h)                  # [B, N, n_outputs]
         return out.permute(0, 2, 1)            # [B, n_outputs, N]

@@ -243,14 +243,14 @@ class UpgradedDeepONetTrainer:
                 )
             if vl < best_val:
                 best_val = vl
-                self._save("best_model.pth", epoch, metrics)
+                self._save(f"{self.operator_name}_best.pth", epoch, metrics)
                 print("  ✓ best model saved")
             self.early_stopping(vl)
             if self.early_stopping.early_stop:
                 print(f"\nEarly stopping at epoch {epoch+1}")
                 break
 
-        self._save("final_model.pth", epochs - 1, metrics)
+        self._save(f"{self.operator_name}_final.pth", epochs - 1, metrics)
         self._save_history()
         print(f"\n{'='*60}\nDone  (best val={best_val:.5f})\n{'='*60}")
 

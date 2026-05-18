@@ -3,7 +3,7 @@
 # Shared training hyper-parameters used across all training scripts.
 
 training:
-  batch_size:    16
+  batch_size:    4
   epochs:        500
   learning_rate: 0.001
   weight_decay:  1.0e-5

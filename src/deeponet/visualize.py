@@ -49,9 +49,20 @@ class DeepONetVisualizer:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         checkpoint = torch.load(model_path, map_location=self.device, weights_only=False)
         
-        operator = checkpoint.get('operator', checkpoint.get('model_version', 'deeponet'))
-        if operator == 'deeponet_fourier':
+        self.operator_name = checkpoint.get('operator', checkpoint.get('model_version', 'deeponet'))
+        print(f"\n============================================================")
+        print(f"Visualizing Operator : {self.operator_name.upper()}")
+        print(f"Loaded Checkpoint    : {model_path}")
+        print(f"============================================================\n")
+
+        if self.operator_name == 'deeponet_fourier':
             self.model = DeepONetFourier.from_legacy_config(self.config).to(self.device)
+        elif self.operator_name == 'transolver':
+            from src.operators.transolver_operator import TransolverOperator
+            self.model = TransolverOperator.from_config(self.config).to(self.device)
+        elif self.operator_name == 'clifford':
+            from src.operators.clifford_operator import CliffordNeuralOperator
+            self.model = CliffordNeuralOperator.from_config(self.config).to(self.device)
         else:
             self.model = DeepONet(self.config).to(self.device)
         
@@ -105,10 +116,18 @@ class DeepONetVisualizer:
         axes[0].axis('equal')
         plt.colorbar(scatter1, ax=axes[0])
         
-        # DeepONet prediction
+        # Model prediction
         scatter2 = axes[1].tricontourf(coords[:, 0], coords[:, 1], deeponet_denorm,
                                        levels=20, cmap='jet', vmin=vmin, vmax=vmax)
-        axes[1].set_title(f'DeepONet Prediction\n{field_name}')
+        
+        display_name = {
+            'deeponet_fourier': 'DeepONet (Fourier)',
+            'deeponet': 'DeepONet',
+            'transolver': 'Transolver++',
+            'clifford': 'Clifford Neural Operator'
+        }.get(self.operator_name, self.operator_name.capitalize())
+        
+        axes[1].set_title(f'{display_name} Prediction\n{field_name}')
         axes[1].set_xlabel('x (m)')
         axes[1].set_ylabel('y (m)')
         axes[1].axis('equal')
@@ -187,15 +206,28 @@ class DeepONetVisualizer:
 
 def main():
     """Main execution"""
+    import argparse
+    parser = argparse.ArgumentParser(description="Visualize Operator Predictions")
+    parser.add_argument("--model-version", type=str, default="deeponet_fourier",
+                        choices=["deeponet", "deeponet_fourier", "transolver", "clifford"],
+                        help="Operator to visualize")
+    args = parser.parse_args()
+
     config_path = project_root / "configs" / "config.yaml"
-    model_path = project_root / "results" / "models" / "best_model.pth"
+    
+    model_path = project_root / "results" / "models" / f"{args.model_version}_best.pth"
+    if not model_path.exists():
+        # Fallback for older deeponet models
+        fallback = project_root / "results" / "models" / "best_model.pth"
+        if fallback.exists():
+            model_path = fallback
+
     scalers_path = project_root / "data" / "deeponet_dataset" / "scalers.pkl"
     
     # Check if files exist
     if not model_path.exists():
         print(f"ERROR: Model not found at {model_path}")
-        print("\nPlease train the model first:")
-        print("  python src/deeponet/train.py")
+        print("\nPlease train the model first.")
         return
     
     if not scalers_path.exists():

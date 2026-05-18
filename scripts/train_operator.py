@@ -66,7 +66,7 @@ class OperatorTrainer:
         model_config_path: Path,
         lr:          float = 1e-3,
         epochs:      int   = 500,
-        batch_size:  int   = 16,
+        batch_size:  int   = 4,
     ) -> None:
         with open(config_path)       as f: self.config       = yaml.safe_load(f)
         with open(model_config_path) as f: self.model_config = yaml.safe_load(f)
@@ -167,7 +167,7 @@ class OperatorTrainer:
 
         preds   = torch.cat(all_preds)
         targets = torch.cat(all_targets)
-        metrics = self.metrics.compute_all(preds, targets, self.field_names)
+        metrics = self.metrics.compute_all_metrics(preds, targets, self.field_names)
         return total / len(self.val_loader), metrics
 
     # ------------------------------------------------------------------
@@ -183,7 +183,7 @@ class OperatorTrainer:
                 self.best_val_loss = val_loss
                 self._save_checkpoint(epoch, val_loss)
 
-            if epoch % 20 == 0 or epoch == 1:
+            if True:
                 elapsed = time.perf_counter() - t0
                 print(
                     f"Epoch {epoch:4d}/{self.epochs}  "
@@ -236,7 +236,7 @@ class OperatorTrainer:
 
         preds   = torch.cat(all_preds)
         targets = torch.cat(all_targets)
-        metrics = self.metrics.compute_all(preds, targets, self.field_names)
+        metrics = self.metrics.compute_all_metrics(preds, targets, self.field_names)
         for k, v in metrics.items():
             print(f"  {k}: {v:.6f}")
 
@@ -258,7 +258,7 @@ def parse_args():
                    help="Select neural operator architecture")
     p.add_argument("--epochs",      type=int,   default=500)
     p.add_argument("--lr",          type=float, default=1e-3)
-    p.add_argument("--batch-size",  type=int,   default=16, dest="batch_size")
+    p.add_argument("--batch-size",  type=int,   default=4, dest="batch_size")
     p.add_argument("--config",      type=Path,
                    default=project_root / "configs" / "config.yaml")
     p.add_argument("--model-config", type=Path,

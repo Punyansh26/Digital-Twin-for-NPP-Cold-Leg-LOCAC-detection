@@ -136,12 +136,11 @@ def main():
             ))
 
     # Step 4: Visualize
-    if not args.skip_training:
-        steps.append((
-            project_root / "src" / "deeponet" / "visualize.py",
-            "STEP 4: Visualize DeepONet Predictions",
-            [],
-        ))
+    steps.append((
+        project_root / "src" / "deeponet" / "visualize.py",
+        f"STEP 4: Visualize {model_version.capitalize()} Predictions",
+        version_args,
+    ))
 
     # Step 5: Train LOCAC detector
     if not args.skip_training:
