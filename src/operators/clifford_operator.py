@@ -122,10 +122,13 @@ class CliffordLayerNorm(nn.Module):
 
     def __init__(self, n_channels: int) -> None:
         super().__init__()
-        self.norm = nn.LayerNorm([n_channels, 8])
+        self.norm = nn.LayerNorm(n_channels * 8)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.norm(x)
+        *batch, C, D = x.shape
+        x_flat = x.reshape(*batch, C * D)
+        out_flat = self.norm(x_flat)
+        return out_flat.reshape(*batch, C, D)
 
 
 # ---------------------------------------------------------------------------

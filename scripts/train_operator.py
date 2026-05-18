@@ -136,9 +136,11 @@ class OperatorTrainer:
 
     # ------------------------------------------------------------------
     def train_epoch(self) -> float:
+        from tqdm import tqdm
         self.model.train()
         total = 0.0
-        for branch, trunk, target in self.train_loader:
+        pbar = tqdm(self.train_loader, desc=f"Training Epoch", leave=False)
+        for branch, trunk, target in pbar:
             self.optimizer.zero_grad()
             loss, _ = self._run_batch(branch, trunk, target)
             self.scaler.scale(loss).backward()
@@ -147,6 +149,7 @@ class OperatorTrainer:
             self.scaler.step(self.optimizer)
             self.scaler.update()
             total += loss.item()
+            pbar.set_postfix({'loss': f"{loss.item():.4f}"})
         return total / len(self.train_loader)
 
     # ------------------------------------------------------------------
