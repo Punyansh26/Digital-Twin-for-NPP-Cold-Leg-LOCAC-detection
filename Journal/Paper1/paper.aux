@@ -1,0 +1,117 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{wecdcd}
+\citation{nrc_loca}
+\citation{lu2021deeponet}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
+\citation{li2021fno}
+\citation{lu2021deeponet}
+\citation{chen1995,lu2022comprehensive}
+\citation{wen2022u,hao2023gnot}
+\citation{wu2024transolver}
+\citation{brandstetter2023clifford}
+\citation{song2018}
+\citation{choi2019}
+\citation{grieves2014,liu2022npp}
+\citation{lu2021deeponet,chen1995}
+\citation{rahaman2019spectral,tancik2020ffn}
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{2}{section.2}\protected@file@percent }
+\newlabel{sec:related}{{II}{2}{Related Work}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Neural Operators for PDE Surrogates}{2}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Transformer and Geometric Neural Operators}{2}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Machine Learning for NPP Accident Detection}{2}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-D}}Digital Twins in Nuclear Engineering}{2}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {III}Methodology}{2}{section.3}\protected@file@percent }
+\newlabel{sec:method}{{III}{2}{Methodology}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}System Overview}{2}{subsection.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces LOCAC detection performance: (left) ROC curve with AUC, (centre) Precision-Recall curve, (right) Confusion matrix. The classifier demonstrates near-perfect discrimination between normal operation and LOCAC events.}}{2}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:performance}{{1}{2}{LOCAC detection performance: (left) ROC curve with AUC, (centre) Precision-Recall curve, (right) Confusion matrix. The classifier demonstrates near-perfect discrimination between normal operation and LOCAC events}{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Problem Formulation}{2}{subsection.3.2}\protected@file@percent }
+\newlabel{eq:operator}{{1}{2}{Problem Formulation}{equation.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}DeepONet with Fourier Feature Encoding}{2}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}1}Standard DeepONet}{2}{subsubsection.3.3.1}\protected@file@percent }
+\newlabel{eq:deeponet}{{2}{2}{Standard DeepONet}{equation.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}2}Fourier Feature Encoding}{3}{subsubsection.3.3.2}\protected@file@percent }
+\newlabel{eq:fourier}{{3}{3}{Fourier Feature Encoding}{equation.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}3}Adaptive GELU Activation}{3}{subsubsection.3.3.3}\protected@file@percent }
+\newlabel{eq:adaptive_gelu}{{4}{3}{Adaptive GELU Activation}{equation.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}4}Full Architecture}{3}{subsubsection.3.3.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces DeepONetFourier Architecture Specifications}}{3}{table.caption.2}\protected@file@percent }
+\newlabel{tab:arch}{{I}{3}{DeepONetFourier Architecture Specifications}{table.caption.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Physics-Informed Composite Loss}{3}{subsection.3.4}\protected@file@percent }
+\newlabel{eq:loss_total}{{8}{3}{Physics-Informed Composite Loss}{equation.8}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}1}Sobolev Loss}{3}{subsubsection.3.4.1}\protected@file@percent }
+\newlabel{eq:sobolev}{{9}{3}{Sobolev Loss}{equation.9}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}2}Divergence-Free Penalty}{3}{subsubsection.3.4.2}\protected@file@percent }
+\newlabel{eq:div}{{10}{3}{Divergence-Free Penalty}{equation.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}CFD Geometry and Simulation Setup}{3}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-F}}Feature Translation}{3}{subsection.3.6}\protected@file@percent }
+\newlabel{eq:severity}{{11}{3}{Feature Translation}{equation.11}{}}
+\newlabel{eq:eta_eff}{{12}{3}{Feature Translation}{equation.12}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces CFD-Derived Features Extracted from DeepONet Predictions}}{4}{table.caption.3}\protected@file@percent }
+\newlabel{tab:features}{{II}{4}{CFD-Derived Features Extracted from DeepONet Predictions}{table.caption.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces NPPAD-Mapped System Signals with Normal and LOCAC Ranges}}{4}{table.caption.4}\protected@file@percent }
+\newlabel{tab:nppad}{{III}{4}{NPPAD-Mapped System Signals with Normal and LOCAC Ranges}{table.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-G}}LOCAC Classifier}{4}{subsection.3.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Implementation Details}{4}{section.4}\protected@file@percent }
+\newlabel{sec:impl}{{IV}{4}{Implementation Details}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Software Stack}{4}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Training Configuration}{4}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Dataset Generation}{4}{subsection.4.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces DeepONetFourier Training Hyperparameters}}{4}{table.caption.5}\protected@file@percent }
+\newlabel{tab:training}{{IV}{4}{DeepONetFourier Training Hyperparameters}{table.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Hardware and Inference Timing}{4}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {V}Experimental Results}{4}{section.5}\protected@file@percent }
+\newlabel{sec:results}{{V}{4}{Experimental Results}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}DeepONet Training Convergence}{4}{subsection.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Training and Validation Loss at Selected Epochs}}{4}{table.caption.6}\protected@file@percent }
+\newlabel{tab:loss_history}{{V}{4}{Training and Validation Loss at Selected Epochs}{table.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}CFD Field Prediction Accuracy}{5}{subsection.5.2}\protected@file@percent }
+\newlabel{eq:rel_err}{{13}{5}{CFD Field Prediction Accuracy}{equation.13}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Pressure field comparison for test case 0: CFD ground truth (left), DeepONet prediction (center), relative error (right). Contour patterns match closely; elevated error near the elbow bend ($<$5\%) is expected due to complex secondary flow.}}{5}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:pressure}{{2}{5}{Pressure field comparison for test case 0: CFD ground truth (left), DeepONet prediction (center), relative error (right). Contour patterns match closely; elevated error near the elbow bend ($<$5\%) is expected due to complex secondary flow}{figure.caption.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Velocity magnitude comparison for test case 0. The boundary layer profile and centreline acceleration at the elbow are reproduced with high fidelity. Errors are concentrated at the elbow inner radius where the Coanda effect creates a recirculation zone.}}{5}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:velocity}{{3}{5}{Velocity magnitude comparison for test case 0. The boundary layer profile and centreline acceleration at the elbow are reproduced with high fidelity. Errors are concentrated at the elbow inner radius where the Coanda effect creates a recirculation zone}{figure.caption.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Temperature field comparison for test case 0. Temperature is the smoothest field and shows the lowest relative error across all test cases. The DeepONet captures the mild axial temperature gradient with high accuracy.}}{5}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:temperature}{{4}{5}{Temperature field comparison for test case 0. Temperature is the smoothest field and shows the lowest relative error across all test cases. The DeepONet captures the mild axial temperature gradient with high accuracy}{figure.caption.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Turbulent kinetic energy (TKE) comparison for test case 0. TKE is the most challenging field due to its nonlinear spatial variability; the Sobolev loss regularization reduces gradient mismatches near peak turbulence zones.}}{5}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:turbulence}{{5}{5}{Turbulent kinetic energy (TKE) comparison for test case 0. TKE is the most challenging field due to its nonlinear spatial variability; the Sobolev loss regularization reduces gradient mismatches near peak turbulence zones}{figure.caption.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces DeepONet Field Prediction Accuracy on Test Set}}{5}{table.caption.11}\protected@file@percent }
+\newlabel{tab:field_metrics}{{VI}{5}{DeepONet Field Prediction Accuracy on Test Set}{table.caption.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}LOCAC Classification Performance}{5}{subsection.5.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces LOCAC detection performance panel: ROC curve (AUC $>$ 0.95), Precision-Recall curve, and Confusion Matrix. The classifier maintains high true-positive rate across all decision thresholds.}}{5}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:locac_perf}{{6}{5}{LOCAC detection performance panel: ROC curve (AUC $>$ 0.95), Precision-Recall curve, and Confusion Matrix. The classifier maintains high true-positive rate across all decision thresholds}{figure.caption.12}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces LOCAC Classifier Performance Metrics (Test Set)}}{6}{table.caption.13}\protected@file@percent }
+\newlabel{tab:locac_metrics}{{VII}{6}{LOCAC Classifier Performance Metrics (Test Set)}{table.caption.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Break-Size Probability Calibration}{6}{subsection.5.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Expected LOCAC Probability vs. Break Size}}{6}{table.caption.14}\protected@file@percent }
+\newlabel{tab:probability}{{VIII}{6}{Expected LOCAC Probability vs. Break Size}{table.caption.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Inference Speed Benchmark}{6}{subsection.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Discussion}{6}{section.6}\protected@file@percent }
+\newlabel{sec:discussion}{{VI}{6}{Discussion}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Impact of Fourier Feature Encoding}{6}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Role of Physics-Informed Loss Terms}{6}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Limitations and Future Work}{6}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion}{6}{section.7}\protected@file@percent }
+\newlabel{sec:conclusion}{{VII}{6}{Conclusion}{section.7}{}}
+\bibcite{lu2021deeponet}{1}
+\bibcite{chen1995}{2}
+\bibcite{lu2022comprehensive}{3}
+\bibcite{li2021fno}{4}
+\bibcite{wu2024transolver}{5}
+\bibcite{brandstetter2023clifford}{6}
+\bibcite{rahaman2019spectral}{7}
+\bibcite{tancik2020ffn}{8}
+\bibcite{wecdcd}{9}
+\bibcite{nrc_loca}{10}
+\bibcite{song2018}{11}
+\bibcite{choi2019}{12}
+\bibcite{grieves2014}{13}
+\bibcite{liu2022npp}{14}
+\bibcite{wen2022u}{15}
+\bibcite{hao2023gnot}{16}
+\@writefile{toc}{\contentsline {section}{References}{7}{section*.16}\protected@file@percent }
+\gdef \@abspage@last{7}
