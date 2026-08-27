@@ -1,0 +1,55 @@
+{
+  "model": "Vanilla DeepONet (unmodified, matched-condition baseline)",
+  "architecture": {
+    "branch": "3\u2192256\u2192512\u2192512\u2192256 ReLU+Dropout(10%)",
+    "trunk": "3\u2192256\u2192512\u2192256 ReLU+Dropout(10%)",
+    "basis_dim": 256,
+    "n_outputs": 4,
+    "parameters": 3162116,
+    "loss": "MSE only"
+  },
+  "protocol": {
+    "dataset": "/run/media/rtx/Files/Code/Minor/minorProjimproved/data/deeponet_dataset/deeponet_dataset.h5",
+    "split": "70/15/15",
+    "optimizer": "Adam",
+    "lr": 0.001,
+    "batch_size": 4,
+    "max_epochs": 2000,
+    "early_stopping_patience": 50,
+    "scheduler": "ReduceLROnPlateau(patience=20, factor=0.5)",
+    "epochs_trained": 119,
+    "device": "cuda",
+    "mixed_precision": true,
+    "timestamp": "2026-08-27T04:50:23.182815"
+  },
+  "val_metrics": {
+    "best_val_loss": 0.00019810335982280473,
+    "pressure_r2": 0.993213,
+    "pressure_rel_l2": 0.02083,
+    "pressure_mae": 0.01297,
+    "velocity_magnitude_r2": 0.994358,
+    "velocity_magnitude_rel_l2": 0.040177,
+    "velocity_magnitude_mae": 0.012231,
+    "turbulence_k_r2": 0.996729,
+    "turbulence_k_rel_l2": 0.03711,
+    "turbulence_k_mae": 0.005207,
+    "temperature_r2": 0.995903,
+    "temperature_rel_l2": 0.02869,
+    "temperature_mae": 0.012694
+  },
+  "test_metrics": {
+    "test_loss": 0.000197,
+    "pressure_r2": 0.99332,
+    "pressure_rel_l2": 0.020654,
+    "pressure_mae": 0.012872,
+    "velocity_magnitude_r2": 0.994341,
+    "velocity_magnitude_rel_l2": 0.040359,
+    "velocity_magnitude_mae": 0.012363,
+    "turbulence_k_r2": 0.996621,
+    "turbulence_k_rel_l2": 0.03734,
+    "turbulence_k_mae": 0.005214,
+    "temperature_r2": 0.995958,
+    "temperature_rel_l2": 0.028594,
+    "temperature_mae": 0.012594
+  }
+}

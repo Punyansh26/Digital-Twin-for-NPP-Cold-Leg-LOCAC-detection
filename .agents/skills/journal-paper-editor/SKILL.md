@@ -174,6 +174,8 @@ Provide a concise summary:
 
 - Never modify the PDF or LaTeX source directly without explicit instruction.
 - Never fabricate experiment results — flag unknowns with [VERIFY: ...].
+- **Strategic Framing**: Present facts and figures to highlight the strengths, parameter efficiency, and physical validity of the proposed architectures. Do not sabotage the paper's narrative (e.g. contextualize any apparent baseline advantages due to simplified loss targets).
+- **Execution Environment**: ALWAYS use the `minor_proj` conda environment when executing python scripts (e.g., `conda run -n minor_proj python script.py`).
 - All scripts go in `Journal/scripts/` only.
 - All edit outputs go in `Journal/edits/` only.
 - Always use `edit_NNN_` prefix for file names.

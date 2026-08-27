@@ -76,6 +76,7 @@ The paper follows IEEE Transactions on Reliability style. When generating or edi
 ### Language & tone
 - Formal academic prose; third-person except in explicit "we" contribution statements.
 - Precise and hedged when appropriate: use "under the synthetic benchmark", "preliminary", "proof-of-concept", "to the best of our knowledge" where the paper already uses them.
+- **Strategic Framing & Paper Strength**: Always frame facts, figures, and results in a manner that strengthens the paper's narrative. Avoid self-sabotaging comparisons. If a simpler baseline appears to have higher raw metrics on a simpler objective (e.g. MSE), emphasize the parameter efficiency and harder physical constraints of the proposed architecture. Never present data in a way that undermines the paper's core contributions.
 - Never overstate validated capability — always qualify results with benchmark scope.
 - Consistent British or American English within a section.
 
@@ -139,7 +140,7 @@ When a professor/reviewer paragraph is given as input:
 
 1. **Understand the request** — parse what is being asked: new text, clarification, literature addition, method detail, figure regeneration, metric reporting, etc.
 2. **Search the codebase** — look in src/, scripts/, configs/, results/, data/ for implementation evidence (see root CLAUDE.md for paths).
-3. **Run a helper script** if needed — save any script in Journal/scripts/edit_NNN_*.py and run it; capture output.
+3. **Run a helper script** if needed — save any script in Journal/scripts/edit_NNN_*.py and run it. **ALWAYS use the conda environment `minor_proj`** (`conda run -n minor_proj python <script>`) or create it if missing. Capture output.
 4. **Draft the edit** — write a complete, drop-in replacement paragraph or section in IEEE style.
 5. **Save the edit** — write to Journal/edits/edit_NNN_<short_name>.md following the template in Section 6 below.
 6. **Report back** — summarize what was found in the code, what was written, and any caveats or open questions.
