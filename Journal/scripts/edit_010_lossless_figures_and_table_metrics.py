@@ -149,6 +149,29 @@ def predict(model, coords, param_vec):
         out = out.squeeze(0)           # (4, N)
     return out.T.numpy()               # (N, 4)
 
+
+@torch.no_grad()
+def predict_deeponet_batches(model, coords, params, batch_size=32):
+    """Yield DeepONetFourier predictions without recomputing trunk bases.
+
+    The standard ``forward`` method evaluates each of the four trunk networks
+    for every batch.  The mesh is fixed across the test split, so the four
+    trunk bases can be computed once and reused for all 300 branch inputs.
+    """
+    trunk = torch.as_tensor(coords, dtype=torch.float32)
+    branch = torch.as_tensor(params, dtype=torch.float32)
+    trunk_bases = [net(trunk) for net in model.trunk_nets]
+
+    for start in range(0, len(branch), batch_size):
+        stop = min(start + batch_size, len(branch))
+        branch_batch = branch[start:stop]
+        fields = []
+        for field_idx, trunk_basis in enumerate(trunk_bases):
+            branch_basis = model.branch_nets[field_idx](branch_batch)
+            field = branch_basis @ trunk_basis.T + model.biases[field_idx]
+            fields.append(field)
+        yield start, stop, torch.stack(fields, dim=1).cpu().numpy()
+
 # ── figure generation ─────────────────────────────────────────────────────────
 
 def make_panel_figure(case_idx, field_name, field_idx,
@@ -160,11 +183,15 @@ def make_panel_figure(case_idx, field_name, field_idx,
     Saved as lossless PNG, 300 dpi.
     """
     vmin, vmax = float(true_vals.min()), float(true_vals.max())
-    norm_gt = mcolors.Normalize(vmin=vmin, vmax=vmax)
-    levels  = 40
+    field_levels = np.linspace(vmin, vmax, 41)
 
     arch_names  = ["DeepONetFourier", "Transolver++", "Clifford Operator"]
     predictions = [pred_don, pred_tra, pred_cli]
+    error_max = max(
+        float(np.max(np.abs(pred[:, field_idx] - true_vals)))
+        for pred in predictions if pred is not None
+    )
+    error_levels = np.linspace(0.0, max(error_max, 1e-12), 41)
 
     fig, axes = plt.subplots(3, 3, figsize=(15, 12))
     fig_num  = FIG_NUMBERS[field_name]
@@ -178,7 +205,9 @@ def make_panel_figure(case_idx, field_name, field_idx,
         ax_gt, ax_pr, ax_er = axes[row]
 
         # Ground truth (always available)
-        tcf_gt = ax_gt.tricontourf(x, y, true_vals, levels=levels, norm=norm_gt, cmap=CMAP)
+        tcf_gt = ax_gt.tricontourf(
+            x, y, true_vals, levels=field_levels, cmap=CMAP, extend="both"
+        )
         ax_gt.set_title(f"{arch}\nGround Truth", fontsize=9)
         ax_gt.axis("equal"); ax_gt.set_xlabel("x"); ax_gt.set_ylabel("y")
         plt.colorbar(tcf_gt, ax=ax_gt, format="%.3f")
@@ -187,14 +216,18 @@ def make_panel_figure(case_idx, field_name, field_idx,
             pred_vals = pred[:, field_idx]
 
             # Prediction — same colorscale as GT
-            tcf_pr = ax_pr.tricontourf(x, y, pred_vals, levels=levels, norm=norm_gt, cmap=CMAP)
+            tcf_pr = ax_pr.tricontourf(
+                x, y, pred_vals, levels=field_levels, cmap=CMAP, extend="both"
+            )
             ax_pr.set_title("Prediction", fontsize=9)
             ax_pr.axis("equal"); ax_pr.set_xlabel("x"); ax_pr.set_ylabel("y")
             plt.colorbar(tcf_pr, ax=ax_pr, format="%.3f")
 
             # Absolute error
             abs_err = np.abs(pred_vals - true_vals)
-            tcf_er  = ax_er.tricontourf(x, y, abs_err, levels=levels, cmap="Reds")
+            tcf_er = ax_er.tricontourf(
+                x, y, abs_err, levels=error_levels, cmap="Reds", extend="max"
+            )
             ax_er.set_title("Absolute Error", fontsize=9)
             ax_er.axis("equal"); ax_er.set_xlabel("x"); ax_er.set_ylabel("y")
             plt.colorbar(tcf_er, ax=ax_er, format="%.4f")
@@ -206,7 +239,9 @@ def make_panel_figure(case_idx, field_name, field_idx,
                         fontsize=10, color="gray")
                 ax.axis("off")
 
-    plt.tight_layout()
+    # Reserve the top margin explicitly so the first-row architecture label
+    # and the figure-level title are not clipped by ``bbox_inches='tight'``.
+    plt.tight_layout(rect=(0.0, 0.0, 1.0, 0.94))
     out_path = FIGURE_DIR / f"fig_{fig_num}_{field_name}_lossless.png"
     plt.savefig(out_path, dpi=DPI, bbox_inches="tight", format="png")
     plt.close(fig)
@@ -222,16 +257,38 @@ def compute_table_vii(model_don, coords, params, targets):
     """
     n_test = targets.shape[0]
     per_field = {f: {"r2": [], "rel_l2": [], "mae": []} for f in FIELDS}
+    target_means = targets.mean(axis=(0, 1), dtype=np.float64)
+    pooled = {
+        f: {"ss_res": 0.0, "ss_tot": 0.0, "target_sq": 0.0,
+            "abs_err": 0.0, "count": 0}
+        for f in FIELDS
+    }
 
-    for i in range(n_test):
-        pred = predict(model_don, coords, params[i])   # (N, 4)
-        true = targets[i]                               # (N, 4)
-        for fi, fname in enumerate(FIELDS):
-            per_field[fname]["r2"].append(r2_score(pred[:, fi], true[:, fi]))
-            per_field[fname]["rel_l2"].append(rel_l2(pred[:, fi], true[:, fi]))
-            per_field[fname]["mae"].append(mae_norm(pred[:, fi], true[:, fi]))
+    for start, stop, pred_batch in predict_deeponet_batches(
+        model_don, coords, params
+    ):
+        for local_idx, sample_idx in enumerate(range(start, stop)):
+            pred = np.transpose(pred_batch[local_idx], (1, 0))  # (N, 4)
+            true = targets[sample_idx]
+            for fi, fname in enumerate(FIELDS):
+                per_field[fname]["r2"].append(r2_score(pred[:, fi], true[:, fi]))
+                per_field[fname]["rel_l2"].append(rel_l2(pred[:, fi], true[:, fi]))
+                per_field[fname]["mae"].append(mae_norm(pred[:, fi], true[:, fi]))
+                err = pred[:, fi].astype(np.float64) - true[:, fi].astype(np.float64)
+                true64 = true[:, fi].astype(np.float64)
+                pooled[fname]["ss_res"] += float(np.sum(err ** 2))
+                pooled[fname]["ss_tot"] += float(
+                    np.sum((true64 - target_means[fi]) ** 2)
+                )
+                pooled[fname]["target_sq"] += float(np.sum(true64 ** 2))
+                pooled[fname]["abs_err"] += float(np.sum(np.abs(err)))
+                pooled[fname]["count"] += int(true64.size)
+        print(f"    evaluated {stop:3d}/{n_test} test samples", flush=True)
 
-    header = f"{'Field':<30} {'R²':>10} {'Rel-L2':>12} {'MAE (norm.)':>14}"
+    header = (
+        f"{'Field':<24} {'Pooled R²':>10} {'Pooled Rel-L2':>14} "
+        f"{'Pooled MAE':>12} {'Per-case R² mean±SD':>22}"
+    )
     print("\n" + "=" * 70)
     print("TABLE VII — DeepONetFourier (300-sample test set, Synthetic Benchmark)")
     print("=" * 70)
@@ -246,11 +303,27 @@ def compute_table_vii(model_don, coords, params, targets):
         rl2s = np.std(per_field[fname]["rel_l2"])
         maem = np.mean(per_field[fname]["mae"])
         maes = np.std(per_field[fname]["mae"])
+        pool = pooled[fname]
+        pooled_r2 = 1.0 - pool["ss_res"] / (pool["ss_tot"] + 1e-12)
+        pooled_rel_l2 = np.sqrt(pool["ss_res"] / (pool["target_sq"] + 1e-12))
+        pooled_mae = pool["abs_err"] / pool["count"]
         label = FIELD_LABELS[fname].split("$")[0].strip()
-        print(f"{label:<30} {r2m:>10.4f}±{r2s:.4f} {rl2m:>10.4f}±{rl2s:.4f} {maem:>12.5f}±{maes:.5f}")
-        results[fname] = dict(r2_mean=float(r2m), r2_std=float(r2s),
-                              rel_l2_mean=float(rl2m), rel_l2_std=float(rl2s),
-                              mae_mean=float(maem), mae_std=float(maes))
+        print(
+            f"{label:<24} {pooled_r2:>10.4f} {pooled_rel_l2:>14.4f} "
+            f"{pooled_mae:>12.5f} {r2m:>10.4f}±{r2s:.4f}"
+        )
+        results[fname] = dict(
+            pooled_r2=float(pooled_r2),
+            pooled_rel_l2=float(pooled_rel_l2),
+            pooled_mae=float(pooled_mae),
+            r2_mean=float(r2m), r2_std=float(r2s),
+            rel_l2_mean=float(rl2m), rel_l2_std=float(rl2s),
+            mae_mean=float(maem), mae_std=float(maes),
+            metric_scope=(
+                "pooled metrics flatten all 300 test cases and nodes; "
+                "mean/std summarize per-case metrics (population SD)"
+            ),
+        )
     print("=" * 70)
     return results
 

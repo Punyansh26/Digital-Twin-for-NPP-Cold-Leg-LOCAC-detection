@@ -1,0 +1,50 @@
+{
+  "pressure": {
+    "pooled_r2": 0.9961155787846551,
+    "pooled_rel_l2": 0.01575269843223709,
+    "pooled_mae": 0.00946673813205708,
+    "r2_mean": 0.9879202947825839,
+    "r2_std": 0.013701650388353517,
+    "rel_l2_mean": 0.01584331413452482,
+    "rel_l2_std": 0.0025986347676235414,
+    "mae_mean": 0.009466738132057072,
+    "mae_std": 0.001051543311493694,
+    "metric_scope": "pooled metrics flatten all 300 test cases and nodes; mean/std summarize per-case metrics (population SD)"
+  },
+  "velocity_magnitude": {
+    "pooled_r2": 0.9957905788538545,
+    "pooled_rel_l2": 0.03481249006525725,
+    "pooled_mae": 0.010562093428056371,
+    "r2_mean": 0.9950024317146839,
+    "r2_std": 0.0011262820335059555,
+    "rel_l2_mean": 0.03607581119284697,
+    "rel_l2_std": 0.004668493915045271,
+    "mae_mean": 0.010562093428056366,
+    "mae_std": 0.0010535574348570157,
+    "metric_scope": "pooled metrics flatten all 300 test cases and nodes; mean/std summarize per-case metrics (population SD)"
+  },
+  "turbulence_k": {
+    "pooled_r2": 0.9951272084814725,
+    "pooled_rel_l2": 0.044853824782585934,
+    "pooled_mae": 0.006664904006052562,
+    "r2_mean": 0.9675367542719967,
+    "r2_std": 0.056909454310776215,
+    "rel_l2_mean": 0.05505989344438712,
+    "rel_l2_std": 0.024586219991148694,
+    "mae_mean": 0.006664904006052557,
+    "mae_std": 0.0019239993980139044,
+    "metric_scope": "pooled metrics flatten all 300 test cases and nodes; mean/std summarize per-case metrics (population SD)"
+  },
+  "temperature": {
+    "pooled_r2": 0.9961801335146435,
+    "pooled_rel_l2": 0.02780277411444301,
+    "pooled_mae": 0.0122135566447307,
+    "r2_mean": 0.7355055587406253,
+    "r2_std": 0.012578629384085348,
+    "rel_l2_mean": 0.04539782494465666,
+    "rel_l2_std": 0.03521114911649699,
+    "mae_mean": 0.012213556644730705,
+    "mae_std": 0.0003182009239249007,
+    "metric_scope": "pooled metrics flatten all 300 test cases and nodes; mean/std summarize per-case metrics (population SD)"
+  }
+}
