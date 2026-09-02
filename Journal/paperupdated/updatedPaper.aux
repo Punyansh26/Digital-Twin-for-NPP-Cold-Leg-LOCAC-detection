@@ -8,8 +8,8 @@
 \citation{rahaman2019spectral}
 \citation{wu2024transolver}
 \citation{brandstetter2023clifford}
-\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
 \citation{li2021fno}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
 \citation{lu2022comprehensive}
 \citation{li2021fno}
 \citation{lu2021deeponet,chen1995}
@@ -21,16 +21,16 @@
 \citation{song2018}
 \citation{choi2019}
 \citation{grieves2014,liu2022npp}
+\citation{isermann2005}
+\citation{ieee1012,nrc7294,trilateral2024}
+\citation{petruzzi2008,nrc_codes}
 \@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{2}{section.2}\protected@file@percent }
 \newlabel{sec:related}{{II}{2}{Related Work}{section.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Neural Operators and DeepONet}{2}{subsection.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Transformer and Geometric Neural Operators}{2}{subsection.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Machine Learning for Nuclear Power Plant Safety}{2}{subsection.2.3}\protected@file@percent }
-\citation{isermann2005}
-\citation{ieee1012,nrc7294,trilateral2024}
-\citation{petruzzi2008,nrc_codes}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-D}}Reliability-Engineering Perspective on AI-Based Detection}{3}{subsection.2.4}\protected@file@percent }
-\newlabel{sec:related_reliability}{{\mbox  {II-D}}{3}{Reliability-Engineering Perspective on AI-Based Detection}{subsection.2.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-D}}Reliability-Engineering Perspective on AI-Based Detection}{2}{subsection.2.4}\protected@file@percent }
+\newlabel{sec:related_reliability}{{\mbox  {II-D}}{2}{Reliability-Engineering Perspective on AI-Based Detection}{subsection.2.4}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {III}Problem Formulation}{3}{section.3}\protected@file@percent }
 \newlabel{sec:problem}{{III}{3}{Problem Formulation}{section.3}{}}
 \newlabel{eq:operator}{{1}{3}{Problem Formulation}{equation.1}{}}
@@ -38,27 +38,28 @@
 \@writefile{toc}{\contentsline {section}{\numberline {IV}System Architecture and Pipeline}{3}{section.4}\protected@file@percent }
 \newlabel{sec:system}{{IV}{3}{System Architecture and Pipeline}{section.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Stage~1: Parametric CFD Data Generation}{3}{subsection.4.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces End-to-end digital-twin proof-of-concept pipeline. Stages 1--4 run offline and Stage~5 executes the screening demonstration. \textcolor {blue}{The evaluated field data are synthetic, NPPAD records are PCTRAN-simulated, and this workflow is neither a plant protection system nor an operationally validated digital twin.}}}{4}{figure.caption.1}\protected@file@percent }
-\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:pipeline}{{1}{4}{End-to-end digital-twin proof-of-concept pipeline. Stages 1--4 run offline and Stage~5 executes the screening demonstration. \added {The evaluated field data are synthetic, NPPAD records are PCTRAN-simulated, and this workflow is neither a plant protection system nor an operationally validated digital twin.}}{figure.caption.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Stage~2: Preprocessing and Normalization}{4}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Stage~3: Neural Operator Training}{4}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Stage~2: Preprocessing and Normalization}{3}{subsection.4.2}\protected@file@percent }
 \citation{qi2022nppad}
-\newlabel{eq:total_loss}{{5}{5}{Stage~3: Neural Operator Training}{equation.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Stage~4: LOCA Indicator Classifier Training}{5}{subsection.4.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces End-to-end digital-twin proof-of-concept pipeline. Stages 1--4 run offline and Stage~5 executes the screening demonstration. \textcolor {blue}{The evaluated field data are synthetic, NPPAD records are PCTRAN-simulated, and this workflow is neither a plant protection system nor an operationally validated digital twin.}}}{4}{figure.1}\protected@file@percent }
+\newlabel{fig:pipeline}{{1}{4}{End-to-end digital-twin proof-of-concept pipeline. Stages 1--4 run offline and Stage~5 executes the screening demonstration. \added {The evaluated field data are synthetic, NPPAD records are PCTRAN-simulated, and this workflow is neither a plant protection system nor an operationally validated digital twin.}}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Stage~3: Neural Operator Training}{4}{subsection.4.3}\protected@file@percent }
+\newlabel{eq:total_loss}{{5}{4}{Stage~3: Neural Operator Training}{equation.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Stage~4: LOCA Indicator Classifier Training}{4}{subsection.4.4}\protected@file@percent }
+\citation{lu2021deeponet,chen1995}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-E}}Stage~5: Inference Pipeline (Screening Mode)}{5}{subsection.4.5}\protected@file@percent }
 \newlabel{sec:inference_pipeline}{{\mbox  {IV-E}}{5}{Stage~5: Inference Pipeline (Screening Mode)}{subsection.4.5}{}}
-\citation{lu2021deeponet,chen1995}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-F}}Time-Series and Benchmarking Modes}{5}{subsection.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {V}Neural Operator Architectures}{5}{section.5}\protected@file@percent }
+\newlabel{sec:architectures}{{V}{5}{Neural Operator Architectures}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Tier 1: DeepONetFourier --- Upgraded Baseline}{5}{subsection.5.1}\protected@file@percent }
+\newlabel{sec:deeponet_fourier}{{\mbox  {V-A}}{5}{Tier 1: DeepONetFourier --- Upgraded Baseline}{subsection.5.1}{}}
+\newlabel{eq:deeponet_base}{{11}{5}{Tier 1: DeepONetFourier --- Upgraded Baseline}{equation.11}{}}
 \citation{rahaman2019spectral}
 \citation{tancik2020ffn}
 \citation{son2021sobolev}
 \citation{wu2024transolver}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-F}}Time-Series and Benchmarking Modes}{6}{subsection.4.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {V}Neural Operator Architectures}{6}{section.5}\protected@file@percent }
-\newlabel{sec:architectures}{{V}{6}{Neural Operator Architectures}{section.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Tier 1: DeepONetFourier --- Upgraded Baseline}{6}{subsection.5.1}\protected@file@percent }
-\newlabel{sec:deeponet_fourier}{{\mbox  {V-A}}{6}{Tier 1: DeepONetFourier --- Upgraded Baseline}{subsection.5.1}{}}
-\newlabel{eq:deeponet_base}{{11}{6}{Tier 1: DeepONetFourier --- Upgraded Baseline}{equation.11}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces \textcolor {blue}{Architecture and Evidence Comparison on the Synthetic Benchmark. DeepONetFourier uses additional serialized-node proxy terms; the other models use MSE only. All evaluated fields share one fixed mesh, so geometry-transfer claims are not tested.}}}{6}{table.1}\protected@file@percent }
+\newlabel{tab:comparison}{{I}{6}{\added {Architecture and Evidence Comparison on the Synthetic Benchmark. DeepONetFourier uses additional serialized-node proxy terms; the other models use MSE only. All evaluated fields share one fixed mesh, so geometry-transfer claims are not tested.}}{table.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-A}1}Improvement 1: Random Fourier Feature Encoding}{6}{subsubsection.5.1.1}\protected@file@percent }
 \newlabel{eq:fourier}{{12}{6}{Improvement 1: Random Fourier Feature Encoding}{equation.12}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-A}2}Improvement 2: Per-Neuron Adaptive GELU Activation}{6}{subsubsection.5.1.2}\protected@file@percent }
@@ -68,17 +69,15 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-A}4}Improvement 4: Serialized-Node Velocity-Variation Proxy}{6}{subsubsection.5.1.4}\protected@file@percent }
 \newlabel{eq:div}{{15}{6}{Improvement 4: Serialized-Node Velocity-Variation Proxy}{equation.15}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-A}5}Architecture Summary}{6}{subsubsection.5.1.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces \textcolor {blue}{DeepONetFourier Architecture vs. the Dataset-Matched Retrained DeepONet Baseline}}}{6}{table.2}\protected@file@percent }
+\newlabel{tab:arch}{{II}{6}{\added {DeepONetFourier Architecture vs. the Dataset-Matched Retrained DeepONet Baseline}}{table.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Tier 2: Transolver++ --- Transformer Neural Operator}{6}{subsection.5.2}\protected@file@percent }
 \newlabel{sec:transolver}{{\mbox  {V-B}}{6}{Tier 2: Transolver++ --- Transformer Neural Operator}{subsection.5.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-B}1}Mesh Tokenization via Soft Assignment}{6}{subsubsection.5.2.1}\protected@file@percent }
+\newlabel{eq:node_embed}{{16}{6}{Mesh Tokenization via Soft Assignment}{equation.16}{}}
+\newlabel{eq:soft_assign}{{17}{6}{Mesh Tokenization via Soft Assignment}{equation.17}{}}
+\newlabel{eq:token_agg}{{18}{6}{Mesh Tokenization via Soft Assignment}{equation.18}{}}
 \citation{brandstetter2023clifford}
-\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces \textcolor {blue}{Architecture and Evidence Comparison on the Synthetic Benchmark. DeepONetFourier uses additional serialized-node proxy terms; the other models use MSE only. All evaluated fields share one fixed mesh, so geometry-transfer claims are not tested.}}}{7}{table.caption.2}\protected@file@percent }
-\newlabel{tab:comparison}{{I}{7}{\added {Architecture and Evidence Comparison on the Synthetic Benchmark. DeepONetFourier uses additional serialized-node proxy terms; the other models use MSE only. All evaluated fields share one fixed mesh, so geometry-transfer claims are not tested.}}{table.caption.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces \textcolor {blue}{DeepONetFourier Architecture vs. the Dataset-Matched Retrained DeepONet Baseline}}}{7}{table.caption.3}\protected@file@percent }
-\newlabel{tab:arch}{{II}{7}{\added {DeepONetFourier Architecture vs. the Dataset-Matched Retrained DeepONet Baseline}}{table.caption.3}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-B}1}Mesh Tokenization via Soft Assignment}{7}{subsubsection.5.2.1}\protected@file@percent }
-\newlabel{eq:node_embed}{{16}{7}{Mesh Tokenization via Soft Assignment}{equation.16}{}}
-\newlabel{eq:soft_assign}{{17}{7}{Mesh Tokenization via Soft Assignment}{equation.17}{}}
-\newlabel{eq:token_agg}{{18}{7}{Mesh Tokenization via Soft Assignment}{equation.18}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-B}2}Branch Conditioning}{7}{subsubsection.5.2.2}\protected@file@percent }
 \newlabel{eq:branch_cond}{{19}{7}{Branch Conditioning}{equation.19}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-B}3}Self-Attention Over Tokens}{7}{subsubsection.5.2.3}\protected@file@percent }
@@ -91,77 +90,78 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Tier 2: Clifford Neural Operator --- Geometric Algebra}{7}{subsection.5.3}\protected@file@percent }
 \newlabel{sec:clifford}{{\mbox  {V-C}}{7}{Tier 2: Clifford Neural Operator --- Geometric Algebra}{subsection.5.3}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-C}1}Multivector Representation}{7}{subsubsection.5.3.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Cl(3,0) Multivector Grade Decomposition}}{7}{table.caption.4}\protected@file@percent }
-\newlabel{tab:grades}{{III}{7}{Cl(3,0) Multivector Grade Decomposition}{table.caption.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Cl(3,0) Multivector Grade Decomposition}}{7}{table.3}\protected@file@percent }
+\newlabel{tab:grades}{{III}{7}{Cl(3,0) Multivector Grade Decomposition}{table.3}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-C}2}CliffordLinear Layer}{7}{subsubsection.5.3.2}\protected@file@percent }
 \newlabel{eq:clifford_linear}{{24}{7}{CliffordLinear Layer}{equation.24}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-C}3}Scalar-Gate Residual}{7}{subsubsection.5.3.3}\protected@file@percent }
+\newlabel{eq:scalar_gate}{{27}{7}{Scalar-Gate Residual}{equation.27}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-C}4}Input/Output Projection}{7}{subsubsection.5.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-C}5}Scope of the Equivariance Claim}{7}{subsubsection.5.3.5}\protected@file@percent }
+\newlabel{eq:equivariance}{{28}{7}{Scope of the Equivariance Claim}{equation.28}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-C}6}Parameter Efficiency}{7}{subsubsection.5.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}LOCA Indicator Detection Pipeline}{7}{section.6}\protected@file@percent }
+\newlabel{sec:pipeline}{{VI}{7}{LOCA Indicator Detection Pipeline}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Feature Translation}{7}{subsection.6.1}\protected@file@percent }
 \citation{qi2022nppad}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-C}3}Scalar-Gate Residual}{8}{subsubsection.5.3.3}\protected@file@percent }
-\newlabel{eq:scalar_gate}{{27}{8}{Scalar-Gate Residual}{equation.27}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-C}4}Input/Output Projection}{8}{subsubsection.5.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-C}5}Scope of the Equivariance Claim}{8}{subsubsection.5.3.5}\protected@file@percent }
-\newlabel{eq:equivariance}{{28}{8}{Scope of the Equivariance Claim}{equation.28}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {V-C}6}Parameter Efficiency}{8}{subsubsection.5.3.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VI}LOCA Indicator Detection Pipeline}{8}{section.6}\protected@file@percent }
-\newlabel{sec:pipeline}{{VI}{8}{LOCA Indicator Detection Pipeline}{section.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Feature Translation}{8}{subsection.6.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {VI-A}1}Blended Severity Model}{8}{subsubsection.6.1.1}\protected@file@percent }
 \newlabel{eq:severity}{{29}{8}{Blended Severity Model}{equation.29}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces NPPAD-Mapped Indicators: Qualitative Trend Under Increasing LOCA Severity (Mapped proxy values from synthetic benchmark; not raw plant measurements.)}}{8}{table.caption.5}\protected@file@percent }
-\newlabel{tab:nppad}{{IV}{8}{NPPAD-Mapped Indicators: Qualitative Trend Under Increasing LOCA Severity (Mapped proxy values from synthetic benchmark; not raw plant measurements.)}{table.caption.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces NPPAD-Mapped Indicators: Qualitative Trend Under Increasing LOCA Severity (Mapped proxy values from synthetic benchmark; not raw plant measurements.)}}{8}{table.4}\protected@file@percent }
+\newlabel{tab:nppad}{{IV}{8}{NPPAD-Mapped Indicators: Qualitative Trend Under Increasing LOCA Severity (Mapped proxy values from synthetic benchmark; not raw plant measurements.)}{table.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Gradient Boosting LOCA Indicator Classifier}{8}{subsection.6.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces \textcolor {blue}{Five-Seed Translation-Path Ablation (mean $\pm $ population SD). The direct severity term is removed in the second column, but label-conditioned break size remains an operator input.}}}{9}{table.caption.6}\protected@file@percent }
-\newlabel{tab:translation_ablation}{{V}{9}{\added {Five-Seed Translation-Path Ablation (mean $\pm $ population SD). The direct severity term is removed in the second column, but label-conditioned break size remains an operator input.}}{table.caption.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {VII}Implementation Details}{9}{section.7}\protected@file@percent }
-\newlabel{sec:impl}{{VII}{9}{Implementation Details}{section.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Software and Hardware}{9}{subsection.7.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}Training Protocol}{9}{subsection.7.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Training Hyperparameters (DeepONetFourier / Transolver / Clifford)}}{9}{table.caption.7}\protected@file@percent }
-\newlabel{tab:training}{{VI}{9}{Training Hyperparameters (DeepONetFourier / Transolver / Clifford)}{table.caption.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Unified Architecture Selection}{9}{subsection.7.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VIII}Experimental Results}{9}{section.8}\protected@file@percent }
-\newlabel{sec:results}{{VIII}{9}{Experimental Results}{section.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Implementation Details}{8}{section.7}\protected@file@percent }
+\newlabel{sec:impl}{{VII}{8}{Implementation Details}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Software and Hardware}{8}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}Training Protocol}{8}{subsection.7.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Training Hyperparameters (DeepONetFourier / Transolver / Clifford)}}{8}{table.5}\protected@file@percent }
+\newlabel{tab:training}{{V}{8}{Training Hyperparameters (DeepONetFourier / Transolver / Clifford)}{table.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Unified Architecture Selection}{8}{subsection.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Experimental Results}{8}{section.8}\protected@file@percent }
+\newlabel{sec:results}{{VIII}{8}{Experimental Results}{section.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-A}}DeepONetFourier Training Convergence}{9}{subsection.8.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces \textcolor {blue}{Representative Archived DeepONetFourier Training Trace (Selected Epochs; Not Used as the Test-Metric Record)}}}{9}{table.caption.8}\protected@file@percent }
-\newlabel{tab:loss_history}{{VII}{9}{\added {Representative Archived DeepONetFourier Training Trace (Selected Epochs; Not Used as the Test-Metric Record)}}{table.caption.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces \textcolor {blue}{Representative Archived DeepONetFourier Training Trace (Selected Epochs; Not Used as the Test-Metric Record)}}}{9}{table.6}\protected@file@percent }
+\newlabel{tab:loss_history}{{VI}{9}{\added {Representative Archived DeepONetFourier Training Trace (Selected Epochs; Not Used as the Test-Metric Record)}}{table.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-B}}Synthetic-Benchmark Field Reconstruction Accuracy}{9}{subsection.8.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces \textcolor {blue}{DeepONetFourier Pooled Field Accuracy (All 300 Held-Out Synthetic Cases, Single Archived Checkpoint)}}}{9}{table.caption.13}\protected@file@percent }
-\newlabel{tab:field_metrics}{{VIII}{9}{\added {DeepONetFourier Pooled Field Accuracy (All 300 Held-Out Synthetic Cases, Single Archived Checkpoint)}}{table.caption.13}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textcolor {blue}{Normalized pressure reconstruction for held-out synthetic case~0. Rows show DeepONetFourier, Transolver++, and Clifford; columns show common-scale ground truth, common-scale prediction, and common-scale absolute error.}}}{10}{figure.caption.9}\protected@file@percent }
-\newlabel{fig:pressure_compare}{{2}{10}{\added {Normalized pressure reconstruction for held-out synthetic case~0. Rows show DeepONetFourier, Transolver++, and Clifford; columns show common-scale ground truth, common-scale prediction, and common-scale absolute error.}}{figure.caption.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-C}}Neural Operator Comparison}{10}{subsection.8.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-D}}LOCA Indicator Classification Performance}{10}{subsection.8.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textcolor {blue}{Normalized velocity-magnitude reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}}{11}{figure.caption.10}\protected@file@percent }
-\newlabel{fig:velocity_compare}{{3}{11}{\added {Normalized velocity-magnitude reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}{figure.caption.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-E}}Inference Speed}{11}{subsection.8.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {IX}Discussion}{11}{section.9}\protected@file@percent }
-\newlabel{sec:discussion}{{IX}{11}{Discussion}{section.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IX-A}}Methodological Contributions}{11}{subsection.9.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textcolor {blue}{Normalized turbulent-kinetic-energy reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}}{12}{figure.caption.11}\protected@file@percent }
-\newlabel{fig:tke_compare}{{4}{12}{\added {Normalized turbulent-kinetic-energy reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}{figure.caption.11}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IX-B}}Architectural Trade-Off Analysis}{12}{subsection.9.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces \textcolor {blue}{DeepONetFourier Pooled Field Accuracy (All 300 Held-Out Synthetic Cases, Single Archived Checkpoint)}}}{9}{table.7}\protected@file@percent }
+\newlabel{tab:field_metrics}{{VII}{9}{\added {DeepONetFourier Pooled Field Accuracy (All 300 Held-Out Synthetic Cases, Single Archived Checkpoint)}}{table.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-C}}Neural Operator Comparison}{9}{subsection.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-D}}LOCA Indicator Classification Performance}{9}{subsection.8.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-E}}Inference Speed}{9}{subsection.8.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IX}Discussion}{9}{section.9}\protected@file@percent }
+\newlabel{sec:discussion}{{IX}{9}{Discussion}{section.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IX-A}}Methodological Contributions}{9}{subsection.9.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textcolor {blue}{Normalized pressure reconstruction for held-out synthetic case~0. Rows show DeepONetFourier, Transolver++, and Clifford; columns show common-scale ground truth, common-scale prediction, and common-scale absolute error.}}}{10}{figure.2}\protected@file@percent }
+\newlabel{fig:pressure_compare}{{2}{10}{\added {Normalized pressure reconstruction for held-out synthetic case~0. Rows show DeepONetFourier, Transolver++, and Clifford; columns show common-scale ground truth, common-scale prediction, and common-scale absolute error.}}{figure.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces \textcolor {blue}{Neural Operator Artifact Comparison (Synthetic Benchmark; Non-Identical Loss Settings)}}}{10}{table.8}\protected@file@percent }
+\newlabel{tab:benchmark}{{VIII}{10}{\added {Neural Operator Artifact Comparison (Synthetic Benchmark; Non-Identical Loss Settings)}}{table.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textcolor {blue}{Normalized velocity-magnitude reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}}{11}{figure.3}\protected@file@percent }
+\newlabel{fig:velocity_compare}{{3}{11}{\added {Normalized velocity-magnitude reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}{figure.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces \textcolor {blue}{LOCA Indicator Classifier Performance (NPPAD-Simulated + Synthetic Transition Data, One Seed-42 Split)}}}{11}{table.9}\protected@file@percent }
+\newlabel{tab:locac_metrics}{{IX}{11}{\added {LOCA Indicator Classifier Performance (NPPAD-Simulated + Synthetic Transition Data, One Seed-42 Split)}}{table.9}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces \textcolor {blue}{Five-Seed Translation-Path Ablation (mean $\pm $ population SD). The direct severity term is removed in the second column, but label-conditioned break size remains an operator input.}}}{11}{table.10}\protected@file@percent }
+\newlabel{tab:translation_ablation}{{X}{11}{\added {Five-Seed Translation-Path Ablation (mean $\pm $ population SD). The direct severity term is removed in the second column, but label-conditioned break size remains an operator input.}}{table.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {XI}{\ignorespaces \textcolor {blue}{Mapped LOCA-Score Response vs. Prescribed Break Size (Synthetic Translation Demonstration; Not a Calibration Result)}}}{11}{table.11}\protected@file@percent }
+\newlabel{tab:probability}{{XI}{11}{\added {Mapped LOCA-Score Response vs. Prescribed Break Size (Synthetic Translation Demonstration; Not a Calibration Result)}}{table.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IX-B}}Architectural Trade-Off Analysis}{11}{subsection.9.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textcolor {blue}{Normalized turbulent-kinetic-energy reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}}{12}{figure.4}\protected@file@percent }
+\newlabel{fig:tke_compare}{{4}{12}{\added {Normalized turbulent-kinetic-energy reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}{figure.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IX-C}}Surrogate-Monitoring Utility and Limits of Current Validation}{12}{subsection.9.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textcolor {blue}{Normalized temperature reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}}{13}{figure.caption.12}\protected@file@percent }
-\newlabel{fig:temperature_compare}{{5}{13}{\added {Normalized temperature reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}{figure.caption.12}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces \textcolor {blue}{Classifier ROC curve (AUC 0.990554), precision--recall curve, and confusion matrix for one seed-42 split of PCTRAN-simulated NPPAD rows plus synthetic transition augmentation. This is classifier-level evidence, not independent end-to-end digital-twin validation.}}}{13}{figure.caption.15}\protected@file@percent }
-\newlabel{fig:locac_perf}{{6}{13}{\added {Classifier ROC curve (AUC 0.990554), precision--recall curve, and confusion matrix for one seed-42 split of PCTRAN-simulated NPPAD rows plus synthetic transition augmentation. This is classifier-level evidence, not independent end-to-end digital-twin validation.}}{figure.caption.15}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IX-D}}Path to Full-Fidelity Validation}{13}{subsection.9.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IX-D}}Path to Full-Fidelity Validation}{12}{subsection.9.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textcolor {blue}{Normalized temperature reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}}{13}{figure.5}\protected@file@percent }
+\newlabel{fig:temperature_compare}{{5}{13}{\added {Normalized temperature reconstruction for held-out synthetic case~0, using the matched layout and scales described in Fig.~\ref {fig:pressure_compare}.}}{figure.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces \textcolor {blue}{Classifier ROC curve (AUC 0.990554), precision--recall curve, and confusion matrix for one seed-42 split of PCTRAN-simulated NPPAD rows plus synthetic transition augmentation. This is classifier-level evidence, not independent end-to-end digital-twin validation.}}}{13}{figure.6}\protected@file@percent }
+\newlabel{fig:locac_perf}{{6}{13}{\added {Classifier ROC curve (AUC 0.990554), precision--recall curve, and confusion matrix for one seed-42 split of PCTRAN-simulated NPPAD rows plus synthetic transition augmentation. This is classifier-level evidence, not independent end-to-end digital-twin validation.}}{figure.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IX-E}}Limitations and Future Work}{13}{subsection.9.5}\protected@file@percent }
+\newlabel{sec:limitations}{{\mbox  {IX-E}}{13}{Limitations and Future Work}{subsection.9.5}{}}
 \citation{nrc7294,trilateral2024}
-\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces \textcolor {blue}{Neural Operator Artifact Comparison (Synthetic Benchmark; Non-Identical Loss Settings)}}}{14}{table.caption.14}\protected@file@percent }
-\newlabel{tab:benchmark}{{IX}{14}{\added {Neural Operator Artifact Comparison (Synthetic Benchmark; Non-Identical Loss Settings)}}{table.caption.14}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces \textcolor {blue}{LOCA Indicator Classifier Performance (NPPAD-Simulated + Synthetic Transition Data, One Seed-42 Split)}}}{14}{table.caption.16}\protected@file@percent }
-\newlabel{tab:locac_metrics}{{X}{14}{\added {LOCA Indicator Classifier Performance (NPPAD-Simulated + Synthetic Transition Data, One Seed-42 Split)}}{table.caption.16}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {XI}{\ignorespaces \textcolor {blue}{Mapped LOCA-Score Response vs. Prescribed Break Size (Synthetic Translation Demonstration; Not a Calibration Result)}}}{14}{table.caption.17}\protected@file@percent }
-\newlabel{tab:probability}{{XI}{14}{\added {Mapped LOCA-Score Response vs. Prescribed Break Size (Synthetic Translation Demonstration; Not a Calibration Result)}}{table.caption.17}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IX-E}}Limitations and Future Work}{14}{subsection.9.5}\protected@file@percent }
-\newlabel{sec:limitations}{{\mbox  {IX-E}}{14}{Limitations and Future Work}{subsection.9.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {X}Conclusion}{14}{section.10}\protected@file@percent }
-\newlabel{sec:conclusion}{{X}{14}{Conclusion}{section.10}{}}
 \citation{qi2022nppad}
 \citation{qi2022nppad}
 \bibcite{lu2021deeponet}{1}
 \bibcite{chen1995}{2}
 \bibcite{lu2022comprehensive}{3}
+\@writefile{toc}{\contentsline {section}{\numberline {X}Conclusion}{14}{section.10}\protected@file@percent }
+\newlabel{sec:conclusion}{{X}{14}{Conclusion}{section.10}{}}
+\@writefile{toc}{\contentsline {section}{References}{14}{section*.3}\protected@file@percent }
 \bibcite{li2021fno}{4}
 \bibcite{wu2024transolver}{5}
 \bibcite{brandstetter2023clifford}{6}
@@ -183,10 +183,9 @@
 \bibcite{trilateral2024}{22}
 \bibcite{petruzzi2008}{23}
 \bibcite{nrc_codes}{24}
-\@writefile{toc}{\contentsline {section}{References}{15}{section*.20}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{Biographies}{15}{IEEEbiography.0}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{Punyansh Thakur}{15}{IEEEbiography.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Anushka Paul}{16}{IEEEbiography.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Ayush Kumar Bhadra}{16}{IEEEbiography.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{Vinay Kumar}{16}{IEEEbiography.4}\protected@file@percent }
-\gdef \@abspage@last{16}
+\@writefile{toc}{\contentsline {subsection}{Anushka Paul}{15}{IEEEbiography.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{Ayush Kumar Bhadra}{15}{IEEEbiography.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{Vinay Kumar}{15}{IEEEbiography.4}\protected@file@percent }
+\gdef \@abspage@last{15}
