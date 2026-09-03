@@ -49,7 +49,7 @@
 %─── Abstract ─────────────────────────────────────────────────────────────────
 \begin{abstract}
 
-\added{High-fidelity computational-fluid-dynamics (CFD) analysis is generally too costly for repeated online accident-screening studies. This paper presents a proof-of-concept AP1000 digital-twin methodology that couples spatial surrogate modeling to a plant-indicator classifier. Three neural operators map inlet velocity, prescribed break-severity proxy, and coolant temperature to pressure, velocity magnitude, turbulent kinetic energy, and temperature on a shared 25,000-point mesh: DeepONetFourier (1,451,012 parameters), a Transolver-inspired token operator (3,244,872), and a grade-structured Clifford-algebra operator (37,380). The evaluated benchmark comprises 2,000 physics-inspired analytic synthetic cases, including 300 held-out cases. The archived DeepONetFourier checkpoint achieved pooled $R^2$ values of 0.9961, 0.9958, 0.9951, and 0.9962 for the four normalized fields, respectively. A dataset-matched unmodified DeepONet baseline is also reported; cross-architecture accuracy ranking is avoided because the objectives are not identical. Separately, a gradient-boosting classifier trained on open PCTRAN-simulated NPPAD records with synthetic transition augmentation achieved ROC-AUC 0.990554 and recall 0.989063 on one fixed row-level split. A translation-path diagnostic confirms executable coupling, but the label-conditioned break input prevents interpretation as independent accident diagnosis. The results establish reproducible workflow feasibility under the analytic benchmark. Full-fidelity CFD or experimental validation, label-independent and group-separated detection tests, matched-loss multi-seed comparisons, and reliability-oriented operating-point analysis remain necessary before safety-relevant assessment.}
+\added{High-fidelity computational-fluid-dynamics (CFD) analysis is generally too costly for repeated online accident-screening studies. This paper presents a proof-of-concept AP1000 digital-twin methodology that couples spatial surrogate modeling to a plant-indicator classifier. Three neural operators map inlet velocity, prescribed break-severity proxy, and coolant temperature to pressure, velocity magnitude, turbulent kinetic energy, and temperature on a shared 25,000-point mesh: DeepONetFourier (1,451,012 parameters), a Transolver-inspired token operator (3,244,872), and a grade-structured Clifford-algebra operator (37,380). The evaluated benchmark comprises 2,000 physics-inspired analytic synthetic cases, including 300 held-out cases. The archived DeepONetFourier checkpoint achieved pooled $R^2$ values of 0.9961, 0.9958, 0.9951, and 0.9962 for the four normalized fields, respectively; a separate seed-42 full-test run of the Transolver-inspired operator achieved 0.9918, 0.9932, 0.9806, and 0.9951. A dataset-matched unmodified DeepONet baseline is also reported; cross-architecture accuracy ranking is avoided because the objectives are not identical and operator stability has not yet been established. Separately, a gradient-boosting classifier trained on open PCTRAN-simulated NPPAD records with synthetic transition augmentation achieved ROC-AUC 0.990554 and recall 0.989063 on one fixed row-level split. A translation-path diagnostic confirms executable coupling, but the label-conditioned break input prevents interpretation as independent accident diagnosis. The results establish reproducible workflow feasibility under the analytic benchmark. Full-fidelity CFD or experimental validation, label-independent and group-separated detection tests, matched-loss multi-seed comparisons, and reliability-oriented operating-point analysis remain necessary before safety-relevant assessment.}
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -572,7 +572,7 @@ The complete pipeline is implemented in Python 3.8+ using PyTorch ($\geq$2.0), s
 All neural operators share a common training framework:
 
 \begin{table}[htbp]
-\caption{Training Hyperparameters (DeepONetFourier / Transolver / Clifford)}
+\caption{\added{Training Hyperparameters (Standard DeepONetFourier / Transolver / Clifford Paths; Reported Seed-42 Transolver Sweep Exceptions Noted)}}
 \label{tab:training}
 \centering
 \resizebox{\columnwidth}{!}{%
@@ -585,8 +585,8 @@ Learning rate & $10^{-3}$ & $10^{-3}$ & $10^{-3}$ \\
 LR schedule & ReduceOnPlateau & CosineAnnealing & CosineAnnealing \\
   \quad patience/period & 20 epochs & --- & --- \\
   \quad factor & 0.5 & --- & --- \\
-Batch size & \added{4} & 16 & 16 \\
-Max epochs & 2000 & 500 & 500 \\
+Batch size & \added{4} & \added{16 standard; 4 in reported sweep} & 16 \\
+Max epochs & 2000 & \added{500 standard; 2000 in reported sweep} & 500 \\
 Early stopping & 50 epochs & 50 epochs & 50 epochs \\
 Mixed precision & Yes & Yes & Yes \\
 Dropout & 5\% & 10\% & --- \\
@@ -612,7 +612,7 @@ All operators accept the same input tensors ($[\texttt{B},3]$ parameters, $[\tex
 \label{sec:results}
 %═══════════════════════════════════════════════════════════════════════════════
 
-\textbf{Result provenance and stability:}  \added{Table~\ref{tab:field_metrics} gives exact pooled metrics recomputed from \texttt{deeponet\_fourier\_best.pth} over all 300 held-out synthetic cases. Table~\ref{tab:locac_metrics} gives exact values stored with the single classifier artifact (seed~42). Table~\ref{tab:translation_ablation} is a five-seed analysis, subject to its class-conditioned-input limitation. Because a five-seed operator sweep has not been completed, cross-architecture accuracy is not reported as a stable comparative result; a matched-objective, multi-seed study is specified in Section~\ref{sec:limitations}.}
+\textbf{Result provenance and stability:}  \added{Table~\ref{tab:field_metrics} gives exact pooled metrics recomputed from \texttt{deeponet\_fourier\_best.pth} over all 300 held-out analytic synthetic cases. Table~\ref{tab:transolver_metrics} reports the separately archived seed-42 Transolver-inspired metric record over the same full test set; this MSE-only run used a 2,000-epoch budget and retained the minimum-validation-loss state from epoch 1,864. Table~\ref{tab:locac_metrics} gives exact values stored with the single classifier artifact (seed~42). Table~\ref{tab:translation_ablation} is a five-seed analysis, subject to its class-conditioned-input limitation. Because a five-seed operator sweep has not been completed, cross-architecture accuracy is not reported as a stable comparative result; a matched-budget, multi-seed study is specified in Section~\ref{sec:limitations}.}
 
 \subsection{DeepONetFourier Training Convergence}
 
@@ -642,7 +642,7 @@ All operators accept the same input tensors ($[\texttt{B},3]$ parameters, $[\tex
 
 \subsection{Synthetic-Benchmark Field Reconstruction Accuracy}
 
-Figs.~\ref{fig:pressure_compare}--\ref{fig:temperature_compare} present comparative reconstructions for the same held-out synthetic case.  \added{All panels were regenerated from the archived checkpoints as 300-dpi lossless PNGs. Within each field, ground truth and every architecture use identical field levels, and all absolute-error panels use one common error scale. These figures are qualitative single-case diagnostics; only DeepONetFourier has the full-test metrics reported in Table~\ref{tab:field_metrics}.}
+Figs.~\ref{fig:pressure_compare}--\ref{fig:temperature_compare} present comparative reconstructions for the same held-out synthetic case.  \added{All panels were regenerated from the archived checkpoints as 300-dpi lossless PNGs. Within each field, ground truth and every architecture use identical field levels, and all absolute-error panels use one common error scale. These figures are qualitative single-case diagnostics; full-test metrics are available for DeepONetFourier and the separate seed-42 Transolver-inspired run in Tables~\ref{tab:field_metrics} and~\ref{tab:transolver_metrics}, respectively. Clifford-algebra accuracy remains limited to the matched-scale case-0 panel.}
 
 \begin{figure*}[htbp]
 \centering
@@ -694,6 +694,26 @@ Temperature & \added{0.9962} & \added{0.0278} & \added{0.01221} \\
 
 \added{Here, pooled $R^2=1-\sum_i(y_i-\hat y_i)^2/\sum_i(y_i-\bar y)^2$, relative $L_2=\|\hat{\bm y}-\bm y\|_2/\|\bm y\|_2$, and MAE is computed after flattening all cases and nodes for each normalized field. Per-case $R^2$ means (population SD) were 0.9879 (0.0137), 0.9950 (0.0011), 0.9675 (0.0569), and 0.7355 (0.0126), respectively. Temperature's lower per-case $R^2$ reflects its small within-case spatial variance despite high pooled performance; reporting both scopes prevents metric-selection ambiguity.}
 
+\begin{table}[htbp]
+\caption{\added{Seed-42 Transolver-Inspired Pooled Field Accuracy (All 300 Held-Out Analytic Synthetic Cases; MSE-Only Objective)}}
+\label{tab:transolver_metrics}
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrr}
+\toprule
+\added{\textbf{Field}} & \added{\textbf{R$^2$}} & \added{\textbf{Rel.\,$L_2$}} & \added{\textbf{MAE (norm.)}} \\
+\midrule
+\added{Pressure} & \added{0.991775} & \added{0.022916} & \added{0.013808} \\
+\added{Velocity magnitude} & \added{0.993163} & \added{0.044359} & \added{0.012909} \\
+\added{Turbulence $k$} & \added{0.980636} & \added{0.089384} & \added{0.012279} \\
+\added{Temperature} & \added{0.995113} & \added{0.031441} & \added{0.013671} \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\added{The Transolver-inspired record has a mean across the four pooled field $R^2$ values of 0.990172 and a minimum validation MSE of $3.03474\times10^{-4}$. These values quantify one initialization on the fixed-mesh analytic benchmark; they neither establish run-to-run stability nor isolate architecture from the non-identical DeepONetFourier objective.}
+
 \subsection{Neural Operator Comparison}
 
 \begin{table*}[htbp]
@@ -706,7 +726,7 @@ Temperature & \added{0.9962} & \added{0.0278} & \added{0.01221} \\
 \textbf{Metric} & \textbf{DeepONet-F} & \textbf{Transolver} & \textbf{Clifford} \\
 \midrule
 Total parameters & 1,451,012 & \added{3,244,872} & \added{37,380} \\
-\added{Retained accuracy evidence} & \added{Pooled $R^2$: 0.9951--0.9962} & \added{Matched-scale case-0 panel} & \added{Matched-scale case-0 panel} \\
+\added{Retained accuracy evidence} & \added{Pooled $R^2$: 0.9951--0.9962} & \added{Seed-42 pooled $R^2$: 0.9806--0.9951} & \added{Matched-scale case-0 panel} \\
 Output shape & $[B,4,N]$ & $[B,4,N]$ & $[B,4,N]$ \\
 Training objective & MSE + index proxies & MSE & MSE \\
 Evaluated geometry & Fixed shared mesh & Fixed shared mesh & Fixed shared mesh \\
@@ -718,7 +738,7 @@ Evaluated geometry & Fixed shared mesh & Fixed shared mesh & Fixed shared mesh \
 \textbf{Key observations under the present benchmark:}
 \begin{itemize}
     \item \textbf{DeepONetFourier} reconstructs the four synthetic fields with pooled $R^2=0.9951$--0.9962 on one fixed-mesh checkpoint.  \added{Its different objective prevents attributing any comparative advantage to architecture alone.}
-    \item \added{\textbf{The Transolver-inspired operator} supplies global token attention and has 3.245M parameters.}
+    \item \added{\textbf{The Transolver-inspired operator} supplies global token attention, has 3.245M parameters, and attained pooled $R^2=0.9806$--0.9951 across the four fields in the seed-42 full-test run.}
     \item \added{\textbf{The Clifford-algebra operator} is compact at 37,380 parameters. Those properties require dedicated learning-curve and rotation-consistency experiments.}
 \end{itemize}
 
@@ -779,15 +799,15 @@ Accuracy & 0.999912 $\pm$ 0.000082 & 0.999978 $\pm$ 0.000044 \\
 
 \subsection{Methodological Contributions}
 
-\added{This work makes three primary methodological contributions. First, it demonstrates that three distinct neural-operator paradigms---enhanced branch--trunk decomposition, mesh-token attention, and geometric-algebra encoding---can share one surrogate-to-indicator pipeline. Second, it establishes exact synthetic-test metrics for the archived DeepONetFourier checkpoint and a dataset-matched unmodified DeepONet baseline while documenting the non-identical objectives. Code inspection identifies two index-space proxy terms, preventing a conservation claim and motivating a geometry-aware retraining experiment. Third, the work exposes the current validation boundary: analytic fields, PCTRAN-simulated classifier data, label-conditioned translation, single-run operator results, and the absence of a matched CFD timing reference.}
+\added{This work makes three primary methodological contributions. First, it demonstrates that three distinct neural-operator paradigms---enhanced branch--trunk decomposition, mesh-token attention, and geometric-algebra encoding---can share one surrogate-to-indicator pipeline. Second, it establishes exact synthetic-test metrics for the archived DeepONetFourier checkpoint, a separately executed seed-42 Transolver-inspired run, and a dataset-matched unmodified DeepONet baseline while documenting the non-identical objectives. Code inspection identifies two index-space proxy terms, preventing a conservation claim and motivating a geometry-aware retraining experiment. Third, the work exposes the current validation boundary: analytic fields, PCTRAN-simulated classifier data, label-conditioned translation, single-run operator results, and the absence of a matched CFD timing reference.}
 
 \subsection{Architectural Trade-Off Analysis}
 
 The three architectures address different deployment priorities and the following observations are framed as \emph{preliminary inductive-bias findings} under non-identical optimization settings:
 
-\textbf{DeepONetFourier} achieved the only fully recomputed 300-case test metrics in this revision and has 54.1\% fewer parameters than the retrained DeepONet baseline. Fourier encoding is an explicit high-frequency representation mechanism; the incremental effects of that encoding, adaptive activation, and the two proxy terms have not been isolated under matched retraining.
+\added{\textbf{DeepONetFourier} has 54.1\% fewer parameters than the retrained DeepONet baseline and achieved pooled $R^2=0.9951$--0.9962 on the 300-case full test set. Fourier encoding is an explicit high-frequency representation mechanism; the incremental effects of that encoding, adaptive activation, and the two proxy terms have not been isolated under matched retraining.}
 
-\added{\textbf{The Transolver-inspired operator} provides global interactions over $M=64$ tokens, with $\mathcal{O}(M^2)$ token-attention complexity, and is the largest studied model at 3.245M parameters. Because all training and evaluation use the same mesh, transfer across topology is a hypothesis rather than a result.}
+\added{\textbf{The Transolver-inspired operator} provides global interactions over $M=64$ tokens, with $\mathcal{O}(M^2)$ token-attention complexity, and is the largest studied model at 3.245M parameters. Its seed-42 full-test record attained a mean field $R^2$ of 0.990172, with all four pooled field values above 0.98. Because this is a single MSE-only run and all training and evaluation use the same mesh, run-to-run stability and transfer across topology remain untested.}
 
 \added{\textbf{The Clifford-algebra operator} is the most compact studied model at 37,380 parameters. Its internal Cl(3,0) operations preserve a useful grade structure, but the dense $256\to4$ decoder mixes grades. Learning-curve and rotation-consistency experiments are required before either advantage can be asserted.}
 
@@ -795,7 +815,7 @@ The three architectures address different deployment priorities and the followin
 
 \added{The current results represent upper-bound methodological performance under controlled, physics-inspired analytic synthetic conditions. Several important caveats apply:}
 
-\added{The synthetic generator encodes qualitative pipe-flow patterns but does not solve governing equations or establish conservation consistency. The pooled $R^2=0.9951$--0.9962 values therefore quantify interpolation on that analytic generator's distribution, not accuracy relative to Fluent CFD, experiments, or plant transients.}
+\added{The synthetic generator encodes qualitative pipe-flow patterns but does not solve governing equations or establish conservation consistency. The reported DeepONetFourier and Transolver-inspired pooled $R^2$ values therefore quantify interpolation on that analytic generator's distribution, not accuracy relative to Fluent CFD, experiments, or plant transients.}
 
 \added{The blended severity model ($\eta_\text{eff}=0.8\eta_\text{input}+0.2\min(\eta_\text{field},1)$) means the main LOCA score is substantially driven by prescribed break size. The available five-seed ablation removes the explicit translator term, but its break-size input is sampled conditionally on the class. A label-independent evaluation remains necessary to quantify whether reconstructed fields add detection information.}
 
@@ -808,7 +828,7 @@ The three architectures address different deployment priorities and the followin
 
 \textbf{Missing baselines}:  \added{A dataset-matched unmodified DeepONet result is now included, but plain MLP and FNO baselines remain absent. A component ablation is also required to isolate Fourier features, adaptive activations, and each proxy term.}
 
-\textbf{Run-to-run stability}: Operator results and the primary classifier artifact are single-run. Only the constrained translation-path ablation has five seeds. \added{Future comparisons will use predeclared seeds, immutable run manifests, and mean $\pm$ sample standard deviation under both current and matched-objective protocols.}
+\added{\textbf{Run-to-run stability}: The reported DeepONetFourier and Transolver-inspired field results and the primary classifier artifact are single-run; Clifford-algebra field accuracy has not been established over the complete test set. Only the constrained translation-path ablation has five seeds. Future comparisons will use predeclared seeds, immutable run manifests, and mean $\pm$ sample standard deviation under both current and matched-objective protocols.}
 
 \textbf{Split and preprocessing protocol}: \added{The current field split samples randomly from a regular parameter grid and therefore tests in-distribution interpolation rather than extrapolation to a held-out operating regime. In addition, the current preprocessor fits min--max scalers before partitioning, so held-out extrema influence scaling. The classifier uses a row-level split that can place time steps from one simulated transient in both training and test sets. Future validation will fit preprocessing on training data only and use parameter-blocked field splits and transient-grouped classifier splits.}
 
@@ -835,7 +855,7 @@ The three architectures address different deployment priorities and the followin
 
 \begin{itemize}
     \item \added{\textbf{DeepONetFourier} has 1,451,012 parameters, 54.1\% fewer than the 3,162,116-parameter retrained DeepONet baseline. Its archived checkpoint attains pooled test $R^2=0.9951$--0.9962 across the four analytic synthetic fields. Fourier coordinates and adaptive activations are combined with two explicitly scoped index-space regularizers.}
-    \item \added{\textbf{The Transolver-inspired operator} has 3,244,872 parameters and provides global attention over 64 learned mesh tokens, offering a distinct mechanism for long-range spatial interaction within the unified interface.}
+    \item \added{\textbf{The Transolver-inspired operator} has 3,244,872 parameters and provides global attention over 64 learned mesh tokens. Its separately archived seed-42 MSE-only run attained pooled test $R^2=0.9806$--0.9951 across the four analytic synthetic fields (mean 0.990172); a completed multi-seed study is still required for a stable comparison.}
     \item \added{\textbf{The Clifford-algebra operator} is the most compact studied architecture at 37,380 parameters, approximately $38.8\times$ fewer than DeepONetFourier. Its internal multivector operations provide a grade-structured inductive bias; rotation-aware decoding remains to be evaluated.}
     \item The single-split classifier artifact reaches ROC-AUC 0.990554, recall 0.989063, and F1 0.988172 on PCTRAN-simulated NPPAD rows plus synthetic transition augmentation. The five-seed translation-path ablation remains label-conditioned, so neither result establishes independent LOCA detection from predicted fields.
     \item \added{The implementation provides a unified single-case inference and timing path for all three architectures. Quantitative speedup is reserved for a matched benchmark with archived timing distributions and a measured CFD reference.}

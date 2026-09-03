@@ -1,0 +1,21 @@
+{
+  "protocol_version": "short-collocation-v2",
+  "dataset": "data/deeponet_dataset/deeponet_dataset.h5",
+  "dataset_bytes": 1601856576,
+  "config_sha256": "40396bbdf334894024578b003265dbc44f494b795249f93a901dfce28be1fafb",
+  "model_config_sha256": "ee541d2228c9b0849bc05fe66a0c175e619c4865c3507c5c1519cf3b37403a08",
+  "split": "archived HDF5 train/val/test groups (1400/300/300)",
+  "max_epochs": 300,
+  "early_stopping_patience": 30,
+  "batch_size": 4,
+  "test_batch_size": 1,
+  "train_points_per_step": 4096,
+  "validation_points_per_step": 4096,
+  "test_scope": "all cases and all 25,000 mesh points",
+  "learning_rate": 0.001,
+  "optimizer": "Adam(weight_decay=1e-5)",
+  "deeponet_fourier_loss": "fieldwise MSE + Sobolev index proxy + velocity-variation index proxy",
+  "transolver_clifford_loss": "MSE",
+  "seed_scope": "initialization, minibatch order, and point collocation",
+  "warning": "Do not combine with the earlier 2000-epoch full-grid records."
+}

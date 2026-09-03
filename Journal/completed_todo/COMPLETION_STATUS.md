@@ -8,6 +8,14 @@ unresolved TODO markers.
 
 - Exact pooled DeepONetFourier metrics for 300 held-out analytic synthetic cases:
   `Journal/scripts/edit_010_table_vii_metrics.json`.
+- Seed-42 Transolver-inspired pooled metrics for the same 300-case, 25,000-point
+  held-out analytic synthetic split:
+  `Journal/completed_todo/evidence/seed_42_transolver_metrics.json` (a
+  content-identical archival copy of
+  `results/multiseed_sweep/20260902_231150/seed_42_transolver_metrics.json`).
+  Its four field R² values are 0.991775, 0.993163, 0.980636, and 0.995113
+  (mean 0.990172). The MSE-only run used a 2,000-epoch budget and selected
+  epoch 1,864 by validation loss.
 - Dataset-matched unmodified DeepONet metrics:
   `results/models/baseline_deeponet_results.json`.
 - Single-split classifier artifact and plot:
@@ -25,26 +33,51 @@ unresolved TODO markers.
   calibration/UQ, and temporal modeling are not claimed as completed results.
   They are expressed as bounded limitations or future experiments without
   action-note placeholders.
-- Transolver and Clifford exact accuracy cells are removed because the available
-  evidence is insufficient for a defensible comparative ranking.
+- The single-seed Transolver accuracy record is reported without converting it
+  into a stable cross-architecture ranking. Clifford exact accuracy remains
+  omitted because the attempted full-grid batch-four run exhausted 8-GB GPU
+  memory before training.
 - Author biographies are omitted rather than fabricated. Verified affiliation
   and contact information remains in the author block.
 - Data availability uses the public repository plus corresponding-author access;
   no DOI/archive is invented.
 
-## Long run not started
+## Author-run multi-seed experiment
 
-The full five-seed operator/classifier sweep is expected to take several hours,
-so it is outside the agreed 20–30 minute autonomous-run limit. The prepared
-command is:
+The original sweep was partially run on 2026-09-02/03. DeepONetFourier seed 42
+took 27,250.0 s, Transolver seed 42 took 24,252.3 s, Clifford seed 42 failed
+with a CUDA out-of-memory error, and DeepONetFourier seed 7 was interrupted.
+Inspection found three causes: a 2,000-epoch default, full 25,000-point training
+steps, and an early-stopping call that checked a `None` return value and could
+therefore never stop.
+
+`Journal/scripts/edit_009B_multiseed_sweep.py` now defines a distinct shortened
+protocol: at most 300 epochs, patience 30, 4,096 reproducibly sampled points per
+training/validation step, full-grid evaluation, test batch size 1, explicit
+protocol manifests, and resumable non-overwriting records. Results from this
+protocol must not be pooled with the original 2,000-epoch records.
+The Transolver and Clifford paths display an overall epoch bar, nested training
+and validation batch bars, current train/validation/best losses and learning
+rate, followed by a full-grid test progress bar.
+
+First validate the repaired Clifford memory path (estimated around 10--15 min
+on the same GPU):
 
 ```bash
-conda run -n minor_proj python Journal/scripts/edit_009B_multiseed_sweep.py
+conda run -n minor_proj python Journal/scripts/edit_009B_multiseed_sweep.py --seeds 42 --architectures clifford
 ```
 
-This run is optional for the present honestly scoped paper, because unsupported
-multi-seed comparison claims are removed. Its outputs would strengthen a later
-revision and must be reviewed before insertion.
+The command prints its new `results/multiseed_sweep/quick_<timestamp>` output
+directory. If that run succeeds, resume the same protocol without overwriting
+the completed record (replace `<run-dir>` with the printed path):
+
+```bash
+conda run -n minor_proj python Journal/scripts/edit_009B_multiseed_sweep.py --resume-dir <run-dir> --seeds 42 7 13 99 2024 --architectures deeponet_fourier transolver clifford
+```
+
+Using the measured full-grid runs as a linear estimate gives approximately
+10--15 min per architecture per seed, but the full sweep remains a multi-hour
+author-run job and must be reviewed before insertion into the manuscript.
 
 ## Current state
 
@@ -69,6 +102,11 @@ revision and must be reviewed before insertion.
   3,244,872; Clifford-algebra operator 37,380.
 - Stored classifier metrics: accuracy 0.977374, precision 0.987281, recall
   0.989063, F1 0.988172, ROC-AUC 0.990554.
+- Stored seed-42 Transolver mean field R²: 0.990172; per-field range:
+  0.980636--0.995113 on the analytic synthetic full test set.
+- The artifact audit confirms that the archived and original Transolver JSON
+  files parse to the same key-value record. Their byte hashes differ only
+  because the archival copy has a terminating newline.
 - Manuscript dependency audit: 23 cited keys, 23 bibliography entries, five
   present figures, and no unresolved markers.
 - Build command:

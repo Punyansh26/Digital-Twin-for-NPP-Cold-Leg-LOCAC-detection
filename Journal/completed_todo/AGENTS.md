@@ -11,6 +11,7 @@
 - `paper.pdf` is the compiled review copy.
 - `figures/` contains local, lossless figure dependencies so the manuscript is
   self-contained.
+- `evidence/` contains exact metric records newly incorporated into the paper.
 - `COMPLETION_STATUS.md` records evidence, resolved TODOs, excluded claims, and
   any work that still requires an author-run experiment.
 
@@ -28,9 +29,14 @@
 - Every numerical claim must name its provenance and scope: analytic synthetic
   fields, PCTRAN-simulated NPPAD records, or another explicit source.
 - Never describe the analytic mock fields as Fluent CFD or plant data.
-- Do not report unevaluated Transolver/Clifford accuracy, exact equivariance,
-  mass conservation, calibrated probability, predictive uncertainty, or a
-  matched CFD speedup.
+- Transolver accuracy may be reported only from the content-identical archived record
+  `evidence/seed_42_transolver_metrics.json` (copied from
+  `results/multiseed_sweep/20260902_231150/seed_42_transolver_metrics.json`), as
+  a single-seed, MSE-only, full-test result on analytic synthetic data. Do not
+  present it as a stable architecture ranking. Clifford full-test accuracy
+  remains unevaluated after the recorded CUDA out-of-memory failure.
+- Do not claim exact Clifford equivariance, mass conservation, calibrated
+  probability, predictive uncertainty, or a matched CFD speedup.
 - Prefer removing an unsupported ranking or recasting it as future work over
   preserving a blocking experiment placeholder.
 - The paper is a proof-of-concept methodology, not a certified plant system.
@@ -57,9 +63,12 @@
 - `artifact_audit.json` records the evidence inventory and dependency checks.
 - `paper.pdf` compiles to 15 pages with embedded fonts and no undefined
   references, missing figures, package warnings, or overfull boxes.
-- The optional multi-seed sweep remains author-run because it exceeds the
-  agreed 20--30 minute limit; its exact command is in
-  `COMPLETION_STATUS.md`.
+- The repaired multi-seed script uses a distinct short-collocation protocol
+  (300 maximum epochs, 4,096 train/validation points per step, full-grid test,
+  batch-one testing). Its results must not be aggregated with the prior
+  2,000-epoch full-grid records. The experiment remains author-run because the
+  full five-seed sweep exceeds the agreed 20--30 minute limit; exact start and
+  resume commands are in `COMPLETION_STATUS.md`.
 
-*Created and finalized: 2026-09-02 by Codex. Update this file if the manuscript
-or evidence set changes.*
+*Created: 2026-09-02 by Codex. Updated: 2026-09-03 after the seed-42
+Transolver result and sweep repair.*

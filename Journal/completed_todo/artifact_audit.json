@@ -228,7 +228,7 @@
   },
   "manuscript": {
     "path": "Journal/completed_todo/paper.tex",
-    "sha256": "a9dde41ff8b9c4ae208fc7247ea3a29845613c3c1e6878ff51159d27f0084cf6",
+    "sha256": "0ef8d990a0dc4b0201c03c93d74c6865dafcbb09b11cf623df90f2b807a6d6a1",
     "cited_keys": [
       "brandstetter2023clifford",
       "chen1995",
@@ -395,6 +395,33 @@
         "mae_mean": 0.012213556644730705,
         "mae_std": 0.0003182009239249007,
         "metric_scope": "pooled metrics flatten all 300 test cases and nodes; mean/std summarize per-case metrics (population SD)"
+      }
+    },
+    "transolver_seed42": {
+      "path": "Journal/completed_todo/evidence/seed_42_transolver_metrics.json",
+      "sha256": "eddcee8cf5e692e8ce94b775ba66076cdda1427ffa5452fea107cddbe4d73bca",
+      "source_path": "results/multiseed_sweep/20260902_231150/seed_42_transolver_metrics.json",
+      "source_available": true,
+      "source_sha256": "646d93581f0854ea6112950170712f94e19164ebe517bc691019a130778499be",
+      "source_content_matches_archive": true,
+      "record": {
+        "pressure_rel_l2": 0.022916365414857864,
+        "pressure_r2": 0.9917754530906677,
+        "pressure_mae": 0.013808215036988258,
+        "velocity_magnitude_rel_l2": 0.04435894638299942,
+        "velocity_magnitude_r2": 0.9931629300117493,
+        "velocity_magnitude_mae": 0.01290908269584179,
+        "turbulence_k_rel_l2": 0.08938445895910263,
+        "turbulence_k_r2": 0.9806360006332397,
+        "turbulence_k_mae": 0.012278905138373375,
+        "temperature_rel_l2": 0.03144129738211632,
+        "temperature_r2": 0.9951126575469971,
+        "temperature_mae": 0.01367134228348732,
+        "seed": 42,
+        "arch": "transolver",
+        "best_val_loss": 0.0003034736862173304,
+        "best_epoch": 1864,
+        "elapsed_s": 24252.3
       }
     },
     "translation_ablation": {

@@ -156,6 +156,14 @@ def main() -> None:
     baseline_metrics_path = MODELS / "baseline_deeponet_results.json"
     field_metrics_path = ROOT / "Journal" / "scripts" / "edit_010_table_vii_metrics.json"
     ablation_path = ROOT / "Journal" / "scripts" / "edit_008d_ablation_results.json"
+    transolver_seed42_source = (
+        ROOT / "results" / "multiseed_sweep" / "20260902_231150"
+        / "seed_42_transolver_metrics.json"
+    )
+    transolver_seed42_path = (
+        ROOT / "Journal" / "completed_todo" / "evidence"
+        / "seed_42_transolver_metrics.json"
+    )
 
     manuscript_path = ROOT / "Journal" / "completed_todo" / "paper.tex"
     manuscript = manuscript_path.read_text(encoding="utf-8")
@@ -201,6 +209,22 @@ def main() -> None:
         "metric_artifacts": {
             "baseline": json.loads(baseline_metrics_path.read_text()),
             "deeponet_fourier": json.loads(field_metrics_path.read_text()),
+            "transolver_seed42": {
+                "path": str(transolver_seed42_path.relative_to(ROOT)),
+                "sha256": sha256(transolver_seed42_path),
+                "source_path": str(transolver_seed42_source.relative_to(ROOT)),
+                "source_available": transolver_seed42_source.exists(),
+                "source_sha256": (
+                    sha256(transolver_seed42_source)
+                    if transolver_seed42_source.exists() else None
+                ),
+                "source_content_matches_archive": (
+                    transolver_seed42_source.exists()
+                    and json.loads(transolver_seed42_source.read_text())
+                    == json.loads(transolver_seed42_path.read_text())
+                ),
+                "record": json.loads(transolver_seed42_path.read_text()),
+            },
             "translation_ablation": json.loads(ablation_path.read_text()),
         },
     }
