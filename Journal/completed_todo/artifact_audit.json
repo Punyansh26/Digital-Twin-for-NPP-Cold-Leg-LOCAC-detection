@@ -1,0 +1,443 @@
+{
+  "command": "conda run -n minor_proj python Journal/scripts/edit_013_completed_paper_audit.py",
+  "torch_version": "2.13.0+cu130",
+  "sklearn_runtime_version": "1.7.2",
+  "cuda_available": false,
+  "dataset": {
+    "path": "data/deeponet_dataset/deeponet_dataset.h5",
+    "shapes": {
+      "train": {
+        "branch": [
+          1400,
+          3
+        ],
+        "trunk": [
+          25000,
+          3
+        ],
+        "targets": [
+          1400,
+          4,
+          25000
+        ]
+      },
+      "val": {
+        "branch": [
+          300,
+          3
+        ],
+        "trunk": [
+          25000,
+          3
+        ],
+        "targets": [
+          300,
+          4,
+          25000
+        ]
+      },
+      "test": {
+        "branch": [
+          300,
+          3
+        ],
+        "trunk": [
+          25000,
+          3
+        ],
+        "targets": [
+          300,
+          4,
+          25000
+        ]
+      }
+    }
+  },
+  "checkpoints": {
+    "baseline_deeponet": {
+      "path": "results/models/baseline_deeponet_best.pth",
+      "bytes": 12672589,
+      "sha256": "72f44329c972acefa1a75785bd377cfa3ad6996030c1c86dddb5b5711901d256",
+      "trainable_parameters": 3162116,
+      "state_tensors": 60,
+      "missing_keys": [],
+      "unexpected_keys": [],
+      "metadata_keys": [
+        "epoch",
+        "metrics",
+        "state_dict",
+        "val_loss"
+      ],
+      "epoch": 69,
+      "operator": null
+    },
+    "deeponet_fourier": {
+      "path": "results/models/deeponet_fourier_best.pth",
+      "bytes": 17509571,
+      "sha256": "c8af3adbaff9c846b155dc7eb1631a2e5d0842b6afee0e5fa391fab66c7f4f8d",
+      "trainable_parameters": 1451012,
+      "state_tensors": 64,
+      "missing_keys": [],
+      "unexpected_keys": [],
+      "metadata_keys": [
+        "config",
+        "epoch",
+        "metrics",
+        "model_state_dict",
+        "model_version",
+        "operator",
+        "optimizer_state_dict"
+      ],
+      "epoch": 70,
+      "operator": "deeponet_fourier"
+    },
+    "transolver": {
+      "path": "results/models/transolver_best.pth",
+      "bytes": 39025215,
+      "sha256": "f66573be81b615f97ffc48bcf4172167bd3ef5c597c81d33578ec6531e2ae86b",
+      "trainable_parameters": 3244872,
+      "state_tensors": 70,
+      "missing_keys": [],
+      "unexpected_keys": [],
+      "metadata_keys": [
+        "epoch",
+        "model_state_dict",
+        "model_version",
+        "operator",
+        "optimizer_state_dict",
+        "val_loss"
+      ],
+      "epoch": 440,
+      "operator": "transolver"
+    },
+    "clifford": {
+      "path": "results/models/clifford_best.pth",
+      "bytes": 475983,
+      "sha256": "eee3cf0bafaf0da26e4bfa9a6b73850bd2fa42d1423b2984e0bd3b4f5461105e",
+      "trainable_parameters": 37380,
+      "state_tensors": 22,
+      "missing_keys": [],
+      "unexpected_keys": [],
+      "metadata_keys": [
+        "epoch",
+        "model_state_dict",
+        "model_version",
+        "operator",
+        "optimizer_state_dict",
+        "val_loss"
+      ],
+      "epoch": 1,
+      "operator": "clifford"
+    }
+  },
+  "classifier": {
+    "path": "results/models/locac_detector.pkl",
+    "bytes": 372901,
+    "sha256": "b68bc3b5b498e0b971c6012828cac14acd6600ccb51b3e7880c4c6b966455bce",
+    "keys": [
+      "config",
+      "metrics",
+      "model",
+      "scaler"
+    ],
+    "metrics": {
+      "accuracy": 0.9773741883116883,
+      "precision": 0.9872813990461049,
+      "recall": 0.9890634954342747,
+      "f1": 0.9881716437702223,
+      "roc_auc": 0.9905537681172067
+    },
+    "load_warnings": [
+      "Trying to unpickle estimator DecisionTreeRegressor from version 1.8.0 when using version 1.7.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "Trying to unpickle estimator DummyClassifier from version 1.8.0 when using version 1.7.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "Trying to unpickle estimator GradientBoostingClassifier from version 1.8.0 when using version 1.7.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "Trying to unpickle estimator StandardScaler from version 1.8.0 when using version 1.7.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations"
+    ]
+  },
+  "nppad": {
+    "Normal": {
+      "files": 1,
+      "rows": 302
+    },
+    "LOCAC": {
+      "files": 100,
+      "rows": 45176
+    }
+  },
+  "figures": {
+    "fig_2_pressure_lossless.png": {
+      "pixels": [
+        4436,
+        3543
+      ],
+      "format": "PNG",
+      "dpi": [
+        299.9994,
+        299.9994
+      ],
+      "sha256": "e33665fca54908eed46ed13a34ff7d9a368333dffa720e8110e562db440d4ef2"
+    },
+    "fig_3_velocity_magnitude_lossless.png": {
+      "pixels": [
+        4436,
+        3543
+      ],
+      "format": "PNG",
+      "dpi": [
+        299.9994,
+        299.9994
+      ],
+      "sha256": "92774e7cb9f249df59ee6bb0c47446272e152cec9c3ed894bf9a0415b6827a6f"
+    },
+    "fig_4_turbulence_k_lossless.png": {
+      "pixels": [
+        4436,
+        3543
+      ],
+      "format": "PNG",
+      "dpi": [
+        299.9994,
+        299.9994
+      ],
+      "sha256": "0710785f6891b9d3437da7162f3a095a96b12649093a8047015a377634c5c57d"
+    },
+    "fig_5_temperature_lossless.png": {
+      "pixels": [
+        4436,
+        3543
+      ],
+      "format": "PNG",
+      "dpi": [
+        299.9994,
+        299.9994
+      ],
+      "sha256": "61d368418fc15d295551fce04b2883799ca6acf8d86723c28650e26f2e49262a"
+    },
+    "locac_detection_performance.png": {
+      "pixels": [
+        2218,
+        731
+      ],
+      "format": "PNG",
+      "dpi": [
+        150.01239999999999,
+        150.01239999999999
+      ],
+      "sha256": "0a0fb11e607c8af5f13d36f5cc8a9b284b436badd3a3c5573f12613899bcaa86"
+    }
+  },
+  "manuscript": {
+    "path": "Journal/completed_todo/paper.tex",
+    "sha256": "a9dde41ff8b9c4ae208fc7247ea3a29845613c3c1e6878ff51159d27f0084cf6",
+    "cited_keys": [
+      "brandstetter2023clifford",
+      "chen1995",
+      "grieves2014",
+      "hao2023gnot",
+      "hossain2025virtual",
+      "huang2023review",
+      "ieee1012",
+      "isermann2005",
+      "lee2026hcsg",
+      "li2021fno",
+      "lu2021deeponet",
+      "lu2022comprehensive",
+      "nrc7294",
+      "nrc_codes",
+      "nrc_loca",
+      "petruzzi2008",
+      "qi2022nppad",
+      "rahaman2019spectral",
+      "son2021sobolev",
+      "tancik2020ffn",
+      "trilateral2024",
+      "wecdcd",
+      "wu2024transolver"
+    ],
+    "bibliography_keys": [
+      "brandstetter2023clifford",
+      "chen1995",
+      "grieves2014",
+      "hao2023gnot",
+      "hossain2025virtual",
+      "huang2023review",
+      "ieee1012",
+      "isermann2005",
+      "lee2026hcsg",
+      "li2021fno",
+      "lu2021deeponet",
+      "lu2022comprehensive",
+      "nrc7294",
+      "nrc_codes",
+      "nrc_loca",
+      "petruzzi2008",
+      "qi2022nppad",
+      "rahaman2019spectral",
+      "son2021sobolev",
+      "tancik2020ffn",
+      "trilateral2024",
+      "wecdcd",
+      "wu2024transolver"
+    ],
+    "cited_but_missing": [],
+    "uncited_bibliography": [],
+    "included_graphics": [
+      "figures/fig_2_pressure_lossless.png",
+      "figures/fig_3_velocity_magnitude_lossless.png",
+      "figures/fig_4_turbulence_k_lossless.png",
+      "figures/fig_5_temperature_lossless.png",
+      "figures/locac_detection_performance.png"
+    ],
+    "missing_graphics": [],
+    "forbidden_markers": []
+  },
+  "metric_artifacts": {
+    "baseline": {
+      "model": "Vanilla DeepONet (unmodified, matched-condition baseline)",
+      "architecture": {
+        "branch": "3\u2192256\u2192512\u2192512\u2192256 ReLU+Dropout(10%)",
+        "trunk": "3\u2192256\u2192512\u2192256 ReLU+Dropout(10%)",
+        "basis_dim": 256,
+        "n_outputs": 4,
+        "parameters": 3162116,
+        "loss": "MSE only"
+      },
+      "protocol": {
+        "dataset": "/run/media/rtx/Files/Code/Minor/minorProjimproved/data/deeponet_dataset/deeponet_dataset.h5",
+        "split": "70/15/15",
+        "optimizer": "Adam",
+        "lr": 0.001,
+        "batch_size": 4,
+        "max_epochs": 2000,
+        "early_stopping_patience": 50,
+        "scheduler": "ReduceLROnPlateau(patience=20, factor=0.5)",
+        "epochs_trained": 119,
+        "device": "cuda",
+        "mixed_precision": true,
+        "timestamp": "2026-08-27T04:50:23.182815"
+      },
+      "val_metrics": {
+        "best_val_loss": 0.00019810335982280473,
+        "pressure_r2": 0.993213,
+        "pressure_rel_l2": 0.02083,
+        "pressure_mae": 0.01297,
+        "velocity_magnitude_r2": 0.994358,
+        "velocity_magnitude_rel_l2": 0.040177,
+        "velocity_magnitude_mae": 0.012231,
+        "turbulence_k_r2": 0.996729,
+        "turbulence_k_rel_l2": 0.03711,
+        "turbulence_k_mae": 0.005207,
+        "temperature_r2": 0.995903,
+        "temperature_rel_l2": 0.02869,
+        "temperature_mae": 0.012694
+      },
+      "test_metrics": {
+        "test_loss": 0.000197,
+        "pressure_r2": 0.99332,
+        "pressure_rel_l2": 0.020654,
+        "pressure_mae": 0.012872,
+        "velocity_magnitude_r2": 0.994341,
+        "velocity_magnitude_rel_l2": 0.040359,
+        "velocity_magnitude_mae": 0.012363,
+        "turbulence_k_r2": 0.996621,
+        "turbulence_k_rel_l2": 0.03734,
+        "turbulence_k_mae": 0.005214,
+        "temperature_r2": 0.995958,
+        "temperature_rel_l2": 0.028594,
+        "temperature_mae": 0.012594
+      }
+    },
+    "deeponet_fourier": {
+      "pressure": {
+        "pooled_r2": 0.9961155787846551,
+        "pooled_rel_l2": 0.01575269843223709,
+        "pooled_mae": 0.00946673813205708,
+        "r2_mean": 0.9879202947825839,
+        "r2_std": 0.013701650388353517,
+        "rel_l2_mean": 0.01584331413452482,
+        "rel_l2_std": 0.0025986347676235414,
+        "mae_mean": 0.009466738132057072,
+        "mae_std": 0.001051543311493694,
+        "metric_scope": "pooled metrics flatten all 300 test cases and nodes; mean/std summarize per-case metrics (population SD)"
+      },
+      "velocity_magnitude": {
+        "pooled_r2": 0.9957905788538545,
+        "pooled_rel_l2": 0.03481249006525725,
+        "pooled_mae": 0.010562093428056371,
+        "r2_mean": 0.9950024317146839,
+        "r2_std": 0.0011262820335059555,
+        "rel_l2_mean": 0.03607581119284697,
+        "rel_l2_std": 0.004668493915045271,
+        "mae_mean": 0.010562093428056366,
+        "mae_std": 0.0010535574348570157,
+        "metric_scope": "pooled metrics flatten all 300 test cases and nodes; mean/std summarize per-case metrics (population SD)"
+      },
+      "turbulence_k": {
+        "pooled_r2": 0.9951272084814725,
+        "pooled_rel_l2": 0.044853824782585934,
+        "pooled_mae": 0.006664904006052562,
+        "r2_mean": 0.9675367542719967,
+        "r2_std": 0.056909454310776215,
+        "rel_l2_mean": 0.05505989344438712,
+        "rel_l2_std": 0.024586219991148694,
+        "mae_mean": 0.006664904006052557,
+        "mae_std": 0.0019239993980139044,
+        "metric_scope": "pooled metrics flatten all 300 test cases and nodes; mean/std summarize per-case metrics (population SD)"
+      },
+      "temperature": {
+        "pooled_r2": 0.9961801335146435,
+        "pooled_rel_l2": 0.02780277411444301,
+        "pooled_mae": 0.0122135566447307,
+        "r2_mean": 0.7355055587406253,
+        "r2_std": 0.012578629384085348,
+        "rel_l2_mean": 0.04539782494465666,
+        "rel_l2_std": 0.03521114911649699,
+        "mae_mean": 0.012213556644730705,
+        "mae_std": 0.0003182009239249007,
+        "metric_scope": "pooled metrics flatten all 300 test cases and nodes; mean/std summarize per-case metrics (population SD)"
+      }
+    },
+    "translation_ablation": {
+      "roc_auc": {
+        "blended": [
+          0.9999970488416704,
+          2.5019662030166334e-06
+        ],
+        "cfd_only": [
+          0.999976759628154,
+          4.648074369191235e-05
+        ]
+      },
+      "recall": {
+        "blended": [
+          1.0,
+          0.0
+        ],
+        "cfd_only": [
+          1.0,
+          0.0
+        ]
+      },
+      "f1": {
+        "blended": [
+          0.9999557362989675,
+          4.140408282459481e-05
+        ],
+        "cfd_only": [
+          0.9999889337686051,
+          2.2132462789814508e-05
+        ]
+      },
+      "accuracy": {
+        "blended": [
+          0.9999120492524186,
+          8.227039109002783e-05
+        ],
+        "cfd_only": [
+          0.9999780123131046,
+          4.397537379068339e-05
+        ]
+      }
+    }
+  }
+}

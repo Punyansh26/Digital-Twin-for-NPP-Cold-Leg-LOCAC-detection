@@ -1,0 +1,19 @@
+{
+  "pressure_rel_l2": 0.014501133002340794,
+  "pressure_r2": 0.9967069029808044,
+  "pressure_mae": 0.00873063039034605,
+  "velocity_magnitude_rel_l2": 0.03049047850072384,
+  "velocity_magnitude_r2": 0.9967699646949768,
+  "velocity_magnitude_mae": 0.009229917079210281,
+  "turbulence_k_rel_l2": 0.045536164194345474,
+  "turbulence_k_r2": 0.9949751496315002,
+  "turbulence_k_mae": 0.006866166368126869,
+  "temperature_rel_l2": 0.026869721710681915,
+  "temperature_r2": 0.9964305758476257,
+  "temperature_mae": 0.011815753765404224,
+  "seed": 42,
+  "arch": "deeponet_fourier",
+  "best_val_loss": 0.0008873648568987846,
+  "best_epoch": 325,
+  "elapsed_s": 27250.0
+}
