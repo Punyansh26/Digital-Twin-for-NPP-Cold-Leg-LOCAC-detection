@@ -13,7 +13,7 @@
   self-contained.
 - `evidence/` contains exact metric records newly incorporated into the paper.
 - `COMPLETION_STATUS.md` records evidence, resolved TODOs, excluded claims, and
-  any work that still requires an author-run experiment.
+  experiments deferred beyond the submitted proof-of-concept scope.
 
 ## Revision presentation
 
@@ -45,8 +45,9 @@
 
 - Paper-supporting Python must run as
   `conda run -n minor_proj python <script>` from the repository root.
-- Do not start work expected to exceed 20–30 minutes. Preserve the script and
-  put the exact author command and expected outputs in `COMPLETION_STATUS.md`.
+- Do not start work expected to exceed 20–30 minutes. Preserve optional scripts,
+  but do not leave a deferred experiment as an active submission requirement
+  unless the authors explicitly elect to run it.
 - Do not overwrite checkpoints or result artifacts. New outputs require a
   distinct, descriptive directory.
 
@@ -63,12 +64,11 @@
 - `artifact_audit.json` records the evidence inventory and dependency checks.
 - `paper.pdf` compiles to 15 pages with embedded fonts and no undefined
   references, missing figures, package warnings, or overfull boxes.
-- The repaired multi-seed script uses a distinct short-collocation protocol
-  (300 maximum epochs, 4,096 train/validation points per step, full-grid test,
-  batch-one testing). Its results must not be aggregated with the prior
-  2,000-epoch full-grid records. The experiment remains author-run because the
-  full five-seed sweep exceeds the agreed 20--30 minute limit; exact start and
-  resume commands are in `COMPLETION_STATUS.md`.
+- The repeated-seed sweep is closed without further training because it exceeds
+  the available compute and thermal budget. The repaired script remains an
+  optional future-study tool, but no manuscript claim depends on executing it.
+  The paper reports fixed archived runs as artifact-traceable feasibility
+  evidence and makes no significance or stochastic-stability claim.
 
-*Created: 2026-09-02 by Codex. Updated: 2026-09-03 after the seed-42
-Transolver result and sweep repair.*
+*Created: 2026-09-02 by Codex. Updated: 2026-09-04 after closing the optional
+repeated-seed experiment.*

@@ -4,14 +4,14 @@
 **Requested by**: Paper placeholder `[Input/confirmation required from the students]` — Sec. VIII
 **Paper section**: Sec. VIII — EXPERIMENTAL RESULTS (Tables VII–IX)
 **Edit type**: metric | addition
-**Status**: superseded by Edit 014
+**Status**: superseded by Edit 015
 
 > **Supersession note (2026-09-03):** The original implementation described
 > below used 2,000 full-grid epochs, contained an inoperative early-stopping
 > check, and triggered a Clifford CUDA out-of-memory error. It has been repaired
 > with a distinct short-collocation protocol. See
-> `edit_014_transolver_seed42_short_sweep.md` and do not use the historical
-> runtime estimates or protocol description below as current instructions.
+> `edit_015_fixed_run_scope.md` and do not use the historical runtime estimates
+> or protocol description below as current submission instructions.
 
 ---
 

@@ -4,7 +4,13 @@
 **Requested by**: Paper placeholder `[Input/confirmation required from the students]` — Sec. VIII
 **Paper section**: Sec. VIII — EXPERIMENTAL RESULTS (Tables VII–IX)
 **Edit type**: metric | replacement
-**Status**: draft
+**Status**: superseded by Edit 015
+
+> **Supersession note (2026-09-04):** The authors closed the repeated-seed
+> experiment because it exceeds the available local compute and thermal budget.
+> The final manuscript uses exact fixed-run artifacts, makes no significance or
+> stochastic-stability claim, and defines repeated matched-budget training as a
+> larger follow-up study. See `edit_015_fixed_run_scope.md`.
 
 ---
 

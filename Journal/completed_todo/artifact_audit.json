@@ -228,7 +228,7 @@
   },
   "manuscript": {
     "path": "Journal/completed_todo/paper.tex",
-    "sha256": "0ef8d990a0dc4b0201c03c93d74c6865dafcbb09b11cf623df90f2b807a6d6a1",
+    "sha256": "f5d800abad12e557586a14a813fc5c2b362ebcc0be472a4ce22b90595e614c06",
     "cited_keys": [
       "brandstetter2023clifford",
       "chen1995",

@@ -4,7 +4,13 @@
 **Requested by**: Authors (insert completed Transolver result and reduce sweep runtime)  
 **Paper section**: Sec. VIII — Experimental Results; Sec. IX — Discussion  
 **Edit type**: metric + replacement + script correction  
-**Status**: ready-for-review
+**Status**: superseded by Edit 015
+
+> **Supersession note (2026-09-04):** The authors elected not to continue the
+> repeated-seed experiment because it exceeds the available compute and thermal
+> budget. The completed seed-42 Transolver result remains valid and reported;
+> the short-sweep execution plan is no longer an active submission task. See
+> `edit_015_fixed_run_scope.md`.
 
 ---
 

@@ -29,7 +29,7 @@ unresolved TODO markers.
 ## Resolution policy for remaining manuscript TODOs
 
 - Matched Fluent timing, geometry-aware gradients/divergence, grade-selective
-  equivariance, label-independent detection, multi-seed operator comparison,
+  equivariance, label-independent detection, repeated-seed operator comparison,
   calibration/UQ, and temporal modeling are not claimed as completed results.
   They are expressed as bounded limitations or future experiments without
   action-note placeholders.
@@ -42,7 +42,7 @@ unresolved TODO markers.
 - Data availability uses the public repository plus corresponding-author access;
   no DOI/archive is invented.
 
-## Author-run multi-seed experiment
+## Multi-seed experiment decision
 
 The original sweep was partially run on 2026-09-02/03. DeepONetFourier seed 42
 took 27,250.0 s, Transolver seed 42 took 24,252.3 s, Clifford seed 42 failed
@@ -56,28 +56,14 @@ protocol: at most 300 epochs, patience 30, 4,096 reproducibly sampled points per
 training/validation step, full-grid evaluation, test batch size 1, explicit
 protocol manifests, and resumable non-overwriting records. Results from this
 protocol must not be pooled with the original 2,000-epoch records.
-The Transolver and Clifford paths display an overall epoch bar, nested training
-and validation batch bars, current train/validation/best losses and learning
-rate, followed by a full-grid test progress bar.
-
-First validate the repaired Clifford memory path (estimated around 10--15 min
-on the same GPU):
-
-```bash
-conda run -n minor_proj python Journal/scripts/edit_009B_multiseed_sweep.py --seeds 42 --architectures clifford
-```
-
-The command prints its new `results/multiseed_sweep/quick_<timestamp>` output
-directory. If that run succeeds, resume the same protocol without overwriting
-the completed record (replace `<run-dir>` with the printed path):
-
-```bash
-conda run -n minor_proj python Journal/scripts/edit_009B_multiseed_sweep.py --resume-dir <run-dir> --seeds 42 7 13 99 2024 --architectures deeponet_fourier transolver clifford
-```
-
-Using the measured full-grid runs as a linear estimate gives approximately
-10--15 min per architecture per seed, but the full sweep remains a multi-hour
-author-run job and must be reviewed before insertion into the manuscript.
+The authors have closed this experiment without further training because even
+the shortened sweep exceeds the available local compute and thermal budget.
+The repaired script is retained for future reproducibility work, but it is not
+an active submission task and no paper claim depends on running it. The
+manuscript instead reports the available fixed artifacts under an explicit
+statistical-scope paragraph, avoids significance claims and cross-objective
+rankings, and positions repeated matched-budget training as a larger follow-up
+study.
 
 ## Current state
 
